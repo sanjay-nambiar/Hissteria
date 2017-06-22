@@ -6,19 +6,19 @@ using namespace DirectX;
 
 namespace DirectXGame
 {
-	Sprite::Sprite(uint32_t spriteId, const Transform2D & transform, const XMFLOAT4X4& textureTransform) :
-		mSpriteId(spriteId), mTransform(transform), mTextureTransform(textureTransform)
+	Sprite::Sprite(const DirectX::XMINT2& spriteIndex, const Transform2D& transform, const XMFLOAT4X4& textureTransform) :
+		mSpriteIndex(spriteIndex), mTransform(transform), mTextureTransform(textureTransform), mColor(1.0f, 1.0f, 1.0f, 1.0f)
 	{
 	}
 
-	uint32_t Sprite::SpriteIndex() const
+	const DirectX::XMINT2& Sprite::SpriteIndex() const
 	{
-		return mSpriteId;
+		return mSpriteIndex;
 	}
 
-	void Sprite::SetSpriteIndex(const uint32_t spriteId)
+	void Sprite::SetSpriteIndex(const DirectX::XMINT2& spriteIndex)
 	{
-		mSpriteId = spriteId;
+		mSpriteIndex = spriteIndex;
 	}
 
 	const Transform2D& Sprite::Transform() const
@@ -29,7 +29,7 @@ namespace DirectXGame
 	void Sprite::SetTransform(const Transform2D& transform)
 	{
 		mTransform = transform;
-	}	
+	}
 
 	const XMFLOAT4X4& Sprite::TextureTransform() const
 	{
@@ -39,5 +39,15 @@ namespace DirectXGame
 	void Sprite::SetTextureTransform(const XMFLOAT4X4& transform)
 	{
 		mTextureTransform = transform;
+	}
+
+	const DirectX::XMFLOAT4& Sprite::Color() const
+	{
+		return mColor;
+	}
+
+	void Sprite::SetColor(const DirectX::XMFLOAT4& color)
+	{
+		mColor = color;
 	}
 }

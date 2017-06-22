@@ -114,6 +114,9 @@
     <Image Include="Content\Textures\snoods_default.png">
       <Filter>Content\Textures</Filter>
     </Image>
+    <Image Include="Content\Textures\Shapes.png">
+      <Filter>Content\Textures</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="Game.Universal_TemporaryKey.pfx">
