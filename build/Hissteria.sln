@@ -1,0 +1,69 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Library.Windows", "..\source\Library.Windows\Library.Windows.vcxproj", "{9791247E-B37F-481E-A42D-075C3B8580CF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Library.Shared", "..\source\Library.Shared\Library.Shared.vcxitems", "{45D41ACC-2C3C-43D2-BC10-02AA73FFC7C7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{16D81047-7DAE-43FB-8B6A-92F7720A4943}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{CB698A3A-1D07-4B01-93F8-B5CDC5672E0A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game.Universal", "..\source\Game.Universal\Game.Universal.vcxproj", "{FB15E03D-7F81-4805-AB43-68F6BDC6859D}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\source\Library.Shared\Library.Shared.vcxitems*{45d41acc-2c3c-43d2-bc10-02aa73ffc7c7}*SharedItemsImports = 9
+		..\source\Library.Shared\Library.Shared.vcxitems*{9791247e-b37f-481e-a42d-075c3b8580cf}*SharedItemsImports = 4
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Debug|ARM.ActiveCfg = Debug|ARM
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Debug|ARM.Build.0 = Debug|ARM
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Debug|x64.ActiveCfg = Debug|x64
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Debug|x64.Build.0 = Debug|x64
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Debug|x86.ActiveCfg = Debug|Win32
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Debug|x86.Build.0 = Debug|Win32
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Release|ARM.ActiveCfg = Release|ARM
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Release|ARM.Build.0 = Release|ARM
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Release|x64.ActiveCfg = Release|x64
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Release|x64.Build.0 = Release|x64
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Release|x86.ActiveCfg = Release|Win32
+		{9791247E-B37F-481E-A42D-075C3B8580CF}.Release|x86.Build.0 = Release|Win32
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Debug|ARM.ActiveCfg = Debug|ARM
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Debug|ARM.Build.0 = Debug|ARM
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Debug|ARM.Deploy.0 = Debug|ARM
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Debug|x64.ActiveCfg = Debug|x64
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Debug|x64.Build.0 = Debug|x64
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Debug|x64.Deploy.0 = Debug|x64
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Debug|x86.ActiveCfg = Debug|Win32
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Debug|x86.Build.0 = Debug|Win32
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Debug|x86.Deploy.0 = Debug|Win32
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Release|ARM.ActiveCfg = Release|ARM
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Release|ARM.Build.0 = Release|ARM
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Release|ARM.Deploy.0 = Release|ARM
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Release|x64.ActiveCfg = Release|x64
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Release|x64.Build.0 = Release|x64
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Release|x64.Deploy.0 = Release|x64
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Release|x86.ActiveCfg = Release|Win32
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Release|x86.Build.0 = Release|Win32
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D}.Release|x86.Deploy.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9791247E-B37F-481E-A42D-075C3B8580CF} = {16D81047-7DAE-43FB-8B6A-92F7720A4943}
+		{45D41ACC-2C3C-43D2-BC10-02AA73FFC7C7} = {16D81047-7DAE-43FB-8B6A-92F7720A4943}
+		{FB15E03D-7F81-4805-AB43-68F6BDC6859D} = {CB698A3A-1D07-4B01-93F8-B5CDC5672E0A}
+	EndGlobalSection
+EndGlobal
