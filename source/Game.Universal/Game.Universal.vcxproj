@@ -258,6 +258,7 @@
     <ClInclude Include="SpawnManager.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteDemoManager.h" />
+    <ClInclude Include="SpriteManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -281,6 +282,7 @@
     <ClCompile Include="SpawnManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteDemoManager.cpp" />
+    <ClCompile Include="SpriteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

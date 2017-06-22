@@ -72,6 +72,7 @@
     </ClCompile>
     <ClCompile Include="Spawn.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Snake.h" />
@@ -106,6 +107,7 @@
     </ClInclude>
     <ClInclude Include="Spawn.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
