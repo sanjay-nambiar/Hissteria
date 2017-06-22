@@ -71,6 +71,7 @@
       <Filter>Samples</Filter>
     </ClCompile>
     <ClCompile Include="Spawn.cpp" />
+    <ClCompile Include="Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Snake.h" />
@@ -104,6 +105,7 @@
       <Filter>Samples</Filter>
     </ClInclude>
     <ClInclude Include="Spawn.h" />
+    <ClInclude Include="Sprite.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">

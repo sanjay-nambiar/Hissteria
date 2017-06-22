@@ -53,6 +53,7 @@
 #include "SpriteDemoManager.h"
 
 // Game
+#include "Sprite.h"
 #include "Spawn.h"
 #include "SpawnManager.h"
 #include "Snake.h"
