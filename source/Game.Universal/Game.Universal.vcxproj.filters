@@ -32,28 +32,78 @@
     <Filter Include="Content\Textures">
       <UniqueIdentifier>{76a8eddb-f0a9-4dde-9b69-0db8ffd3eee2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Samples">
+      <UniqueIdentifier>{2dec396f-8ffa-4576-bf1a-7fa1c461d685}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{c2843093-37ce-458b-baa6-3be1740df48d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App.cpp" />
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="GameMain.cpp" />
-    <ClCompile Include="Ball.cpp" />
-    <ClCompile Include="BallManager.cpp" />
-    <ClCompile Include="FieldManager.cpp" />
-    <ClCompile Include="Field.cpp" />
-    <ClCompile Include="MoodySprite.cpp" />
-    <ClCompile Include="SpriteDemoManager.cpp" />
+    <ClCompile Include="Snake.cpp" />
+    <ClCompile Include="SpawnManager.cpp" />
+    <ClCompile Include="SnakeManager.cpp" />
+    <ClCompile Include="App.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMain.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Ball.cpp">
+      <Filter>Samples</Filter>
+    </ClCompile>
+    <ClCompile Include="BallManager.cpp">
+      <Filter>Samples</Filter>
+    </ClCompile>
+    <ClCompile Include="Field.cpp">
+      <Filter>Samples</Filter>
+    </ClCompile>
+    <ClCompile Include="FieldManager.cpp">
+      <Filter>Samples</Filter>
+    </ClCompile>
+    <ClCompile Include="MoodySprite.cpp">
+      <Filter>Samples</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteDemoManager.cpp">
+      <Filter>Samples</Filter>
+    </ClCompile>
+    <ClCompile Include="Spawn.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="GameMain.h" />
-    <ClInclude Include="Ball.h" />
-    <ClInclude Include="BallManager.h" />
-    <ClInclude Include="FieldManager.h" />
-    <ClInclude Include="Field.h" />
-    <ClInclude Include="MoodySprite.h" />
-    <ClInclude Include="SpriteDemoManager.h" />
+    <ClInclude Include="Snake.h" />
+    <ClInclude Include="SpawnManager.h" />
+    <ClInclude Include="SnakeManager.h" />
+    <ClInclude Include="App.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMain.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Ball.h">
+      <Filter>Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="BallManager.h">
+      <Filter>Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="Field.h">
+      <Filter>Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="FieldManager.h">
+      <Filter>Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="MoodySprite.h">
+      <Filter>Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteDemoManager.h">
+      <Filter>Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="Spawn.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -64,11 +114,12 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="Game.Universal_TemporaryKey.pfx" />
+    <None Include="Game.Universal_TemporaryKey.pfx">
+      <Filter>Core</Filter>
+    </None>
+    <None Include="packages.config">
+      <Filter>Core</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Content\Shaders\ShapeRendererVS.hlsl">
@@ -83,5 +134,10 @@
     <FxCompile Include="Content\Shaders\SpriteRendererPS.hlsl">
       <Filter>Content\Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <Filter>Core</Filter>
+    </AppxManifest>
   </ItemGroup>
 </Project>

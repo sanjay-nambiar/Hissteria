@@ -248,9 +248,13 @@
     <ClInclude Include="BallManager.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="FieldManager.h" />
+    <ClInclude Include="Spawn.h" />
     <ClInclude Include="GameMain.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="MoodySprite.h" />
+    <ClInclude Include="Snake.h" />
+    <ClInclude Include="SnakeManager.h" />
+    <ClInclude Include="SpawnManager.h" />
     <ClInclude Include="SpriteDemoManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -259,6 +263,7 @@
     <ClCompile Include="BallManager.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="FieldManager.cpp" />
+    <ClCompile Include="Spawn.cpp" />
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -269,6 +274,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="MoodySprite.cpp" />
+    <ClCompile Include="Snake.cpp" />
+    <ClCompile Include="SnakeManager.cpp" />
+    <ClCompile Include="SpawnManager.cpp" />
     <ClCompile Include="SpriteDemoManager.cpp" />
   </ItemGroup>
   <ItemGroup>

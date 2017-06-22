@@ -51,3 +51,9 @@
 #include "FieldManager.h"
 #include "MoodySprite.h"
 #include "SpriteDemoManager.h"
+
+// Game
+#include "Spawn.h"
+#include "SpawnManager.h"
+#include "Snake.h"
+#include "SnakeManager.h"
