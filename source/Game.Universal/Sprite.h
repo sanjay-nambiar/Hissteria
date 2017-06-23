@@ -5,7 +5,8 @@ namespace DirectXGame
 	class Sprite
 	{
 	public:
-		Sprite(const DirectX::XMINT2& spriteIndex, const DX::Transform2D& transform, const DirectX::XMFLOAT4X4& textureTransform = DX::MatrixHelper::Identity);
+		Sprite(const DirectX::XMINT2& spriteIndex, const DX::Transform2D& transform = DX::Transform2D(),
+			const DirectX::XMFLOAT4X4& textureTransform = DX::MatrixHelper::Identity);
 
 		const DirectX::XMINT2& SpriteIndex() const;
 		void SetSpriteIndex(const DirectX::XMINT2& spriteIndex);

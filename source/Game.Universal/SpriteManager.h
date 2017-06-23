@@ -16,10 +16,13 @@ namespace DirectXGame
 	public:
 		SpriteManager(const std::shared_ptr<DX::DeviceResources>& deviceResources, const std::shared_ptr<DX::Camera>& camera);
 
-		virtual void CreateDeviceDependentResources() override;
-		virtual void ReleaseDeviceDependentResources() override;
-		virtual void Update(const DX::StepTimer& timer) override;
-		virtual void Render(const DX::StepTimer& timer) override;
+		void CreateDeviceDependentResources() override;
+		void ReleaseDeviceDependentResources() override;
+		void Update(const DX::StepTimer& timer) override;
+		void Render(const DX::StepTimer& timer) override;
+		
+		std::weak_ptr<Sprite> CreateSprite(const DirectX::XMINT2& spriteIndex, const DX::Transform2D& transform = DX::Transform2D());
+		void RemoveSprite(const std::weak_ptr<Sprite>& sprite);
 
 	private:
 		struct VSCBufferPerObject

@@ -14,8 +14,8 @@ namespace DirectXGame
 	const uint32_t SpriteManager::SpriteRows = 1;
 	const XMFLOAT2 SpriteManager::UVScalingFactor = XMFLOAT2(1.0f / SpriteColumns, 1.0f / SpriteRows);
 	const std::wstring SpriteManager::SpriteSheet = L"Content\\Textures\\Shapes.png";
-	const std::wstring SpriteManager::SpriteRendererVS = L"Content\\Textures\\Shapes.png";
-	const std::wstring SpriteManager::SpriteRendererPS = L"Content\\Textures\\Shapes.png";
+	const std::wstring SpriteManager::SpriteRendererVS = L"SpriteRendererVS.cso";
+	const std::wstring SpriteManager::SpriteRendererPS = L"SpriteRendererPS.cso";
 
 	SpriteManager::SpriteManager(const shared_ptr<DX::DeviceResources>& deviceResources, const shared_ptr<Camera>& camera) :
 		DrawableGameComponent(deviceResources, camera),
@@ -168,6 +168,26 @@ namespace DirectXGame
 		{
 			DrawSprite(*sprite);
 		}
+	}
+
+	std::weak_ptr<Sprite> SpriteManager::CreateSprite(const DirectX::XMINT2& spriteIndex, const DX::Transform2D& transform)
+	{
+		auto sprite = make_shared<Sprite>(spriteIndex);
+
+		XMFLOAT4X4 textureTransform;
+		XMMATRIX textureTransformMatrix = XMMatrixScaling(UVScalingFactor.x, UVScalingFactor.y, 0) * XMMatrixTranslation(UVScalingFactor.x * sprite->SpriteIndex().x,
+			UVScalingFactor.y * sprite->SpriteIndex().y, 0.0f);
+		XMStoreFloat4x4(&textureTransform, textureTransformMatrix);
+		sprite->SetTextureTransform(textureTransform);
+		sprite->SetTransform(transform);
+		
+		mSprites.push_back(move(sprite));
+		return mSprites.back();
+	}
+
+	void SpriteManager::RemoveSprite(const std::weak_ptr<Sprite>& sprite)
+	{
+		mSprites.erase(std::remove(mSprites.begin(), mSprites.end(), static_cast<std::shared_ptr<Sprite>>(sprite)), mSprites.end());
 	}
 
 	void SpriteManager::DrawSprite(Sprite& sprite)

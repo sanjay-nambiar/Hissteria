@@ -38,22 +38,11 @@ namespace DirectXGame
 		auto fpsTextRenderer = make_shared<FpsTextRenderer>(mDeviceResources);
 		mComponents.push_back(fpsTextRenderer);
 
-		auto spawnManager = make_shared<SpawnManager>(mDeviceResources, camera);
+		auto spriteManager = make_shared<SpriteManager>(mDeviceResources, camera);
+		mComponents.push_back(spriteManager);
+
+		auto spawnManager = make_shared<SpawnManager>(1, spriteManager);
 		mComponents.push_back(spawnManager);
-
-		/*auto fieldManager = make_shared<FieldManager>(mDeviceResources, camera);
-		mComponents.push_back(fieldManager);
-
-		auto ballManager = make_shared<BallManager>(mDeviceResources, camera);
-		ballManager->SetActiveField(fieldManager->ActiveField());
-		mComponents.push_back(ballManager);		
-
-		const int32_t spriteRowCount = 12;
-		const int32_t spriteColumnCount = 15;
-		auto spriteDemoManager = make_shared<SpriteDemoManager>(mDeviceResources, camera, spriteRowCount, spriteColumnCount);		
-		const XMFLOAT2 center((-spriteColumnCount + 1) * SpriteDemoManager::SpriteScale.x, (-spriteRowCount + 1) * SpriteDemoManager::SpriteScale.y);
-		spriteDemoManager->SetPositon(center);
-		mComponents.push_back(spriteDemoManager);*/
 
 		mTimer.SetFixedTimeStep(true);
 		mTimer.SetTargetElapsedSeconds(1.0 / 60);
