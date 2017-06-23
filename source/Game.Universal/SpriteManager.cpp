@@ -8,7 +8,6 @@ using namespace Microsoft::WRL;
 
 namespace DirectXGame
 {
-
 	const DirectX::XMFLOAT2 SpriteManager::SpriteScale = XMFLOAT2(3.0f, 3.0f);
 	const uint32_t SpriteManager::SpriteColumns = 3;
 	const uint32_t SpriteManager::SpriteRows = 1;

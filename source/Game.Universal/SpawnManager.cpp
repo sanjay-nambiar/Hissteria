@@ -6,7 +6,6 @@
 using namespace std;
 using namespace DX;
 using namespace DirectX;
-using namespace Microsoft::WRL;
 
 namespace DirectXGame
 {

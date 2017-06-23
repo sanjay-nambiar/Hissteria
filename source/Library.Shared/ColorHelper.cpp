@@ -6,6 +6,12 @@ using namespace DirectX::PackedVector;
 
 namespace DX
 {
+	const XMFLOAT4 ColorHelper::Black = { 0.0f, 0.0f, 0.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Red = { 1.0f, 0.0f, 0.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Green = { 0.0f, 1.0f, 0.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Blue = { 0.0f, 0.0f, 1.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::White = { 1.0f, 1.0f, 1.0f, 1.0f };
+
 	std::random_device ColorHelper::sDevice;
 	std::default_random_engine ColorHelper::sGenerator(sDevice());
 	std::uniform_real_distribution<float> ColorHelper::sDistribution(0, 1);

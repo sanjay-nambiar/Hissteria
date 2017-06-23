@@ -18,6 +18,12 @@ namespace DX
 		ColorHelper& operator=(const ColorHelper&) = delete;
 		ColorHelper& operator=(ColorHelper&&) = delete;
 
+		static const DirectX::XMFLOAT4 Black;
+		static const DirectX::XMFLOAT4 Red;
+		static const DirectX::XMFLOAT4 Green;
+		static const DirectX::XMFLOAT4 Blue;
+		static const DirectX::XMFLOAT4 White;
+
 	private:
 		static std::random_device sDevice;
 		static std::default_random_engine sGenerator;

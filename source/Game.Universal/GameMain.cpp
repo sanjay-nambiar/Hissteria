@@ -44,6 +44,9 @@ namespace DirectXGame
 		auto spawnManager = make_shared<SpawnManager>(1, spriteManager);
 		mComponents.push_back(spawnManager);
 
+		auto snakeManager = make_shared<SnakeManager>(spriteManager);
+		mComponents.push_back(snakeManager);
+
 		mTimer.SetFixedTimeStep(true);
 		mTimer.SetTargetElapsedSeconds(1.0 / 60);
 

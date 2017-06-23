@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DrawableGameComponent.h"
+#include "GameComponent.h"
 #include "MatrixHelper.h"
 #include <chrono>
 #include <memory>
