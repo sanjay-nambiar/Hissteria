@@ -10,8 +10,14 @@ namespace DirectXGame
 	const float Snake::MaxSpeed = 50.0f;
 	const float Snake::MaxForce = 5.0f;
 
-	Snake::Snake(std::uint32_t bodyBlocks, XMFLOAT2 blockDimension, XMINT2 facing, const std::shared_ptr<SpriteManager>& spriteManager) :
-		mDimension(blockDimension), mHeadingDirection({ -1.0f, 0.0f }), mSpeed(MaxSpeed),
+	const std::unordered_map<Snake::SnakeType, Snake::SnakeTypeConfig> Snake::SnakeTypeConfigMapping = {
+		{ SnakeType::Circular, { XMINT2(0, 0), 50.0f } },
+		{ SnakeType::ChainLink, { XMINT2(1, 0), 30.0f } }
+	};
+
+
+	Snake::Snake(SnakeType type, std::uint32_t bodyBlocks, XMFLOAT2 blockDimension, XMINT2 facing, const std::shared_ptr<SpriteManager>& spriteManager) :
+		mDimension(blockDimension), mHeadingDirection({ -1.0f, 0.0f }), mSpeed(MaxSpeed), mColliderRadius(SnakeTypeConfigMapping.at(type).mColliderRadius),
 		mSpriteManager(spriteManager), mBlockSeparation(0.0f)
 	{
 		assert(bodyBlocks > 0 && bodyBlocks < MaxBodyBlocks);
@@ -34,7 +40,7 @@ namespace DirectXGame
 			mBlockSeparation = XMVectorGetX(XMVector2Length(blockDimensionVector));
 
 			BodyBlock block;
-			block.mSprite = mSpriteManager->CreateSprite(XMINT2(0, 0));
+			block.mSprite = mSpriteManager->CreateSprite(SnakeTypeConfigMapping.at(type).mSpriteIndex);
 			auto sprite = block.mSprite.lock();
 			sprite->SetColor(ColorHelper::Blue);
 
@@ -88,6 +94,11 @@ namespace DirectXGame
 
 		XMVECTOR direction = XMVector2Normalize(XMLoadFloat2(&headingDirection));
 		XMStoreFloat2(&mHeadingDirection, direction);
+	}
+
+	Snake::SnakeType Snake::Type() const
+	{
+		return mType;
 	}
 
 	const DirectX::XMFLOAT2& Snake::HeadingDirection()

@@ -12,17 +12,26 @@ namespace DirectXGame
 	class Spawn
 	{
 	public:
-		enum SpawnType
+		enum class SpawnType
 		{
 			Food
 		};
 
 		Spawn(SpawnType type, std::weak_ptr<SpriteManager> spriteManager);
+
+		SpawnType Type() const;
 	private:
+		struct SpawnTypeConfig
+		{
+			const DirectX::XMINT2 mSpriteIndex;
+			const float mColliderRadius;
+		};
+
 		SpawnType mType;
 		std::weak_ptr<Sprite> mSprite;
+		float mColliderRadius;
 
-		static const std::unordered_map<SpawnType, DirectX::XMINT2> SpriteTypeToIndexMap;
+		static const std::unordered_map<SpawnType, SpawnTypeConfig> SpawnTypeConfigMapping;
 
 		friend SpawnManager;
 	};
