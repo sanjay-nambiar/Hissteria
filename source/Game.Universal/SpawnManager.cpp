@@ -66,4 +66,10 @@ namespace DirectXGame
 			mSecondsSinceLastSpawn = 0;
 		}
 	}
+
+	const std::vector<std::shared_ptr<Spawn>>& SpawnManager::Spawns()
+	{
+		return mSpawns;
+	}
 }
+

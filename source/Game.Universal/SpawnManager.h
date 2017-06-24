@@ -20,6 +20,8 @@ namespace DirectXGame
 		void ReleaseDeviceDependentResources() override;
 		void Update(const DX::StepTimer& timer) override;
 
+		const std::vector<std::shared_ptr<Spawn>>& Spawns();
+
 	private:
 		std::vector<std::shared_ptr<Spawn>> mSpawns;
 
