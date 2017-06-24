@@ -31,8 +31,7 @@ namespace DirectXGame
 		{
 			headingOffset.y = -1.0f;
 		}
-
-		if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::Right))
+		else if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::Right))
 		{
 			headingOffset.x = 1.0f;
 		}

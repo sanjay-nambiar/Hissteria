@@ -11,12 +11,13 @@ namespace DirectXGame
 	const float Snake::MaxForce = 5.0f;
 
 	Snake::Snake(std::uint32_t bodyBlocks, XMFLOAT2 blockDimension, XMINT2 facing, const std::shared_ptr<SpriteManager>& spriteManager) :
-		mDimension(blockDimension), mVelocity({ 0.0f, 0.0f }), mSpriteManager(spriteManager), mBlockSeparation(0.0f)
+		mDimension(blockDimension), mHeadingDirection({ -1.0f, 0.0f }), mSpeed(MaxSpeed),
+		mSpriteManager(spriteManager), mBlockSeparation(0.0f)
 	{
 		assert(bodyBlocks > 0 && bodyBlocks < MaxBodyBlocks);
 		mBody.reserve(bodyBlocks);
 
-		XMFLOAT2 position = { 0.0f, 0.0f };
+		XMFLOAT2 positionFloat = { 0.0f, 0.0f };
 		XMVECTOR blockOffset;
 		
 		// calculate block offset and offset position to sprite's center
@@ -28,32 +29,63 @@ namespace DirectXGame
 			centerOffset *= blockDimensionVector;
 
 			blockOffset = facingVector * blockDimensionVector;
-			XMStoreFloat2(&position, centerOffset);
+			XMStoreFloat2(&mBlockOffset, blockOffset);
+			XMStoreFloat2(&positionFloat, centerOffset);
 			mBlockSeparation = XMVectorGetX(XMVector2Length(blockDimensionVector));
-		}
 
-		for (std::uint32_t i = 0; i < bodyBlocks; ++i)
-		{
 			BodyBlock block;
 			block.mSprite = mSpriteManager->CreateSprite(XMINT2(0, 0));
 			auto sprite = block.mSprite.lock();
 			sprite->SetColor(ColorHelper::Blue);
 
 			auto transform = Transform2D();
-			transform.SetPosition(position);
+			XMVECTOR position = centerOffset;
+			XMVECTOR heading = -XMVector2Normalize(XMLoadFloat2(&mHeadingDirection)) * XMLoadFloat2(&mBlockOffset);
+
+			XMStoreFloat2(&positionFloat, position);
+			transform.SetPosition(positionFloat);
 			transform.SetScale(XMFLOAT2(3.0f, 3.0f));
 			sprite->SetTransform(transform);
-			
 			mBody.emplace_back(block);
-
-			XMVECTOR positionVector = XMLoadFloat2(&position);
-			positionVector += blockOffset;
-			XMStoreFloat2(&position, positionVector);
 		}
+
+		for (std::uint32_t i = 1; i < bodyBlocks; ++i)
+		{
+			AddBlock();
+		}
+	}
+
+	void Snake::AddBlock()
+	{
+		BodyBlock block;
+		block.mSprite = mSpriteManager->CreateSprite(XMINT2(0, 0));
+		auto sprite = block.mSprite.lock();
+		sprite->SetColor(ColorHelper::Blue);
+
+		auto transform = Transform2D();
+		XMVECTOR position = XMLoadFloat2(&mBody.back().mSprite.lock()->Transform().Position());
+		XMVECTOR heading = -XMVector2Normalize(XMLoadFloat2(&mHeadingDirection)) * XMLoadFloat2(&mBlockOffset);
+		position += heading;
+		XMFLOAT2 positionFloat;
+		XMStoreFloat2(&positionFloat, position);
+		transform.SetPosition(positionFloat);
+		transform.SetScale(XMFLOAT2(3.0f, 3.0f));
+		sprite->SetTransform(transform);
+
+		mBody.emplace_back(block);
 	}
 
 	void Snake::SetHeadingDirection(DirectX::XMFLOAT2 headingDirection)
 	{
+		if (headingDirection.x == -mHeadingDirection.x && headingDirection.x != 0)
+		{
+			return;
+		}
+		if (headingDirection.y == -mHeadingDirection.y && headingDirection.y != 0)
+		{
+			return;
+		}
+
 		XMVECTOR direction = XMVector2Normalize(XMLoadFloat2(&headingDirection));
 		XMStoreFloat2(&mHeadingDirection, direction);
 	}
@@ -65,7 +97,7 @@ namespace DirectXGame
 
 	void Snake::Update(const StepTimer& timer)
 	{
-		XMVECTOR velocity = XMLoadFloat2(&mVelocity);
+		XMVECTOR velocity = XMVector2Normalize(XMLoadFloat2(&mHeadingDirection)) * mSpeed;
 		XMVECTOR prevPosition;
 		XMVECTOR prevBlockNewPosition;
 		float deltaPositionLength;
@@ -77,23 +109,7 @@ namespace DirectXGame
 
 			XMVECTOR position = XMLoadFloat2(&transform.Position());
 			prevPosition = position;
-			XMVECTOR target = position + (XMLoadFloat2(&mHeadingDirection) * 1000);
-			XMVECTOR desiredVelocity = XMVector2Normalize(target - position) * MaxSpeed;
-			XMVECTOR steering = desiredVelocity - velocity;
-			
-			float steeringLengthSq = XMVectorGetX(XMVector2LengthSq(steering));
-			if (steeringLengthSq > MaxForce)
-			{
-				steering = MaxForce * XMVector2Normalize(steering);
-			}
-
-			velocity += steering;
-			float velocityLengthSq = XMVectorGetX(XMVector2LengthSq(velocity));
-			if (velocityLengthSq > MaxSpeed)
-			{
-				velocity = MaxSpeed * XMVector2Normalize(velocity);
-			}
-			position = position + velocity * static_cast<float>(timer.GetElapsedSeconds());
+			position = position + (velocity * static_cast<float>(timer.GetElapsedSeconds()));
 
 			XMFLOAT2 positionFloat;
 			XMStoreFloat2(&positionFloat, position);

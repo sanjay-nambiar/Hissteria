@@ -14,6 +14,9 @@ namespace DirectXGame
 		Snake(std::uint32_t bodyBlocks, DirectX::XMFLOAT2 blockDimension, DirectX::XMINT2 facing, const std::shared_ptr<SpriteManager>& spriteManager);
 
 		void SetHeadingDirection(DirectX::XMFLOAT2 headingDirection);
+
+		void AddBlock();
+
 		const DirectX::XMFLOAT2& HeadingDirection();
 
 		void Update(const DX::StepTimer& timer);
@@ -26,10 +29,11 @@ namespace DirectXGame
 		std::vector<BodyBlock> mBody;
 		DirectX::XMFLOAT2 mDimension;
 		DirectX::XMFLOAT2 mHeadingDirection;
-		DirectX::XMFLOAT2 mVelocity;
+		float mSpeed;
 
 		std::shared_ptr<SpriteManager> mSpriteManager;
 		float mBlockSeparation;
+		DirectX::XMFLOAT2 mBlockOffset;
 
 		static const std::uint32_t MaxBodyBlocks;
 		static const float MaxSpeed;
