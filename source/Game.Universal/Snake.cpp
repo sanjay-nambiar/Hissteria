@@ -7,11 +7,11 @@ using namespace DX;
 namespace DirectXGame
 {
 	const std::uint32_t Snake::MaxBodyBlocks = 20;
-	const XMFLOAT2 Snake::MaxVelocity = { 30.0f, 25.0f };
-	const XMFLOAT2 Snake::MaxForce = { 100.0f, 100.0f };
+	const float Snake::MaxSpeed = 50.0f;
+	const float Snake::MaxForce = 5.0f;
 
 	Snake::Snake(std::uint32_t bodyBlocks, XMFLOAT2 blockDimension, XMINT2 facing, const std::shared_ptr<SpriteManager>& spriteManager) :
-		mDimension(blockDimension), mVelocity({ 0.0f, 0.0f }), mSpriteManager(spriteManager)
+		mDimension(blockDimension), mVelocity({ 0.0f, 0.0f }), mSpriteManager(spriteManager), mBlockSeparation(0.0f)
 	{
 		assert(bodyBlocks > 0 && bodyBlocks < MaxBodyBlocks);
 		mBody.reserve(bodyBlocks);
@@ -29,6 +29,7 @@ namespace DirectXGame
 
 			blockOffset = facingVector * blockDimensionVector;
 			XMStoreFloat2(&position, centerOffset);
+			mBlockSeparation = XMVectorGetX(XMVector2Length(blockDimensionVector));
 		}
 
 		for (std::uint32_t i = 0; i < bodyBlocks; ++i)
@@ -64,10 +65,9 @@ namespace DirectXGame
 
 	void Snake::Update(const StepTimer& timer)
 	{
-		XMVECTOR maxVelocity = XMLoadFloat2(&MaxVelocity);
-		XMVECTOR maxForce = XMLoadFloat2(&MaxForce);
 		XMVECTOR velocity = XMLoadFloat2(&mVelocity);
 		XMVECTOR prevPosition;
+		XMVECTOR prevBlockNewPosition;
 		float deltaPositionLength;
 
 		{
@@ -77,22 +77,22 @@ namespace DirectXGame
 
 			XMVECTOR position = XMLoadFloat2(&transform.Position());
 			prevPosition = position;
-			XMVECTOR target = position + (XMLoadFloat2(&mHeadingDirection) * 10);
-			XMVECTOR desiredVelocity = XMVector2Normalize(target - position) * maxVelocity;
+			XMVECTOR target = position + (XMLoadFloat2(&mHeadingDirection) * 1000);
+			XMVECTOR desiredVelocity = XMVector2Normalize(target - position) * MaxSpeed;
 			XMVECTOR steering = desiredVelocity - velocity;
-			XMFLOAT2 steeringFloat;
-			XMStoreFloat2(&steeringFloat, steering);
+			
+			float steeringLengthSq = XMVectorGetX(XMVector2LengthSq(steering));
+			if (steeringLengthSq > MaxForce)
+			{
+				steering = MaxForce * XMVector2Normalize(steering);
+			}
 
-			steeringFloat.x = (steeringFloat.x > MaxForce.x) ? MaxForce.x : steeringFloat.x;
-			steeringFloat.y = (steeringFloat.y > MaxForce.y) ? MaxForce.y : steeringFloat.y;
-			steering = XMLoadFloat2(&steeringFloat);
-			// steering = steering / 1.0f; // 1.0f is mass here
-
-			XMFLOAT2 velocityFloat;
-			XMStoreFloat2(&velocityFloat, (velocity + steering));
-			velocityFloat.x = velocityFloat.x > MaxVelocity.x ? MaxVelocity.x : velocityFloat.x;
-			velocityFloat.y = velocityFloat.y > MaxVelocity.y ? MaxVelocity.y : velocityFloat.y;
-			velocity = XMLoadFloat2(&velocityFloat);
+			velocity += steering;
+			float velocityLengthSq = XMVectorGetX(XMVector2LengthSq(velocity));
+			if (velocityLengthSq > MaxSpeed)
+			{
+				velocity = MaxSpeed * XMVector2Normalize(velocity);
+			}
 			position = position + velocity * static_cast<float>(timer.GetElapsedSeconds());
 
 			XMFLOAT2 positionFloat;
@@ -101,6 +101,7 @@ namespace DirectXGame
 			sprite->SetTransform(transform);
 
 			deltaPositionLength = XMVectorGetX(XMVector2Length(position - prevPosition));
+			prevBlockNewPosition = position;
 		}
 
 		for (std::uint32_t index = 1; index < mBody.size(); ++index)
@@ -112,6 +113,10 @@ namespace DirectXGame
 			XMVECTOR direction = XMVector2Normalize(prevPosition - position);
 			prevPosition = position;
 			position += (direction * deltaPositionLength);
+
+			XMVECTOR delta = XMVector2Normalize(position - prevBlockNewPosition) * mBlockSeparation;
+			position = prevBlockNewPosition + delta;
+			prevBlockNewPosition = position;
 
 			XMFLOAT2 positionFloat;
 			XMStoreFloat2(&positionFloat, position);

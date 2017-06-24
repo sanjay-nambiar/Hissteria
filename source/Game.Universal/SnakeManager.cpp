@@ -15,7 +15,7 @@ namespace DirectXGame
 	{
 		XMFLOAT2 dimension = { 6.0f, 3.0f };
 		XMINT2 facing = { 1, 0 };
-		auto snake = make_shared<Snake>(5, dimension, facing, mSpriteManager);
+		auto snake = make_shared<Snake>(15, dimension, facing, mSpriteManager);
 		snake->SetHeadingDirection(XMFLOAT2(-1.0f, 0.0f));
 		mSnakes.push_back(snake);
 	}

@@ -29,10 +29,11 @@ namespace DirectXGame
 		DirectX::XMFLOAT2 mVelocity;
 
 		std::shared_ptr<SpriteManager> mSpriteManager;
+		float mBlockSeparation;
 
 		static const std::uint32_t MaxBodyBlocks;
-		static const DirectX::XMFLOAT2 MaxVelocity;
-		static const DirectX::XMFLOAT2 MaxForce;
+		static const float MaxSpeed;
+		static const float MaxForce;
 
 		friend SnakeManager;
 	};
