@@ -14,10 +14,11 @@ namespace DirectXGame
 		enum class SnakeType
 		{
 			Circular,
-			ChainLink
+			ChainLink,
+			Star
 		};
 
-		Snake(SnakeType type, std::uint32_t bodyBlocks, DirectX::XMFLOAT2 blockDimension, DirectX::XMINT2 facing, const std::shared_ptr<SpriteManager>& spriteManager);
+		Snake(SnakeType type, std::uint32_t bodyBlocks, DirectX::XMFLOAT2 blockDimension, DirectX::XMFLOAT2 heading, const std::shared_ptr<SpriteManager>& spriteManager);
 
 		void SetHeadingDirection(DirectX::XMFLOAT2 headingDirection);
 		void AddBlock();
@@ -44,16 +45,15 @@ namespace DirectXGame
 		DirectX::XMFLOAT2 mHeadingDirection;
 		float mSpeed;
 		const float mColliderRadius;
+		float mBlockSeparation;
 
 		std::shared_ptr<SpriteManager> mSpriteManager;
-		float mBlockSeparation;
-		DirectX::XMFLOAT2 mBlockOffset;
 
 		static const std::uint32_t MaxBodyBlocks;
 		static const float MaxSpeed;
 		static const float MaxForce;
-		static const float ColliderRadius;
-
+		static const DirectX::XMFLOAT2 BlockScale;
+		static const DirectX::XMFLOAT2 ZeroAngleVector;
 		static const std::unordered_map<SnakeType, SnakeTypeConfig> SnakeTypeConfigMapping;
 
 		friend SnakeManager;

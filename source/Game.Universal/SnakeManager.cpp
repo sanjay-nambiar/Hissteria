@@ -15,9 +15,8 @@ namespace DirectXGame
 		mKeyboardComponent(keyboardComponent), mGamePadComponent(gamePadComponent)
 	{
 		XMFLOAT2 dimension = { 6.0f, 3.0f };
-		XMINT2 facing = { 1, 0 };
-		auto snake = make_shared<Snake>(Snake::SnakeType::Circular, 15, dimension, facing, mSpriteManager);
-		snake->SetHeadingDirection(XMFLOAT2(-1.0f, 0.0f));
+		XMFLOAT2 heading = { 1.0f, 0.0f };
+		auto snake = make_shared<Snake>(Snake::SnakeType::ChainLink, 10, dimension, heading, mSpriteManager);
 		mSnakes.push_back(snake);
 	}
 
