@@ -93,18 +93,29 @@ namespace DirectXGame
 				CoreApplication::Exit();
 			}
 
+
+			// Turn on master debug
 			if (mKeyboard->WasKeyPressedThisFrame(Keys::OemTilde))
 			{
-				if (mGameState != GameState::DebugPause)
+				ProgramHelper::IsDebugEnabled = !ProgramHelper::IsDebugEnabled;
+			}
+
+			// Debug keys
+			if (ProgramHelper::IsDebugEnabled)
+			{
+				if (mKeyboard->WasKeyPressedThisFrame(Keys::Space))
 				{
-					mPreviousGameState = mGameState;
-					mGameState = GameState::DebugPause;
-				}
-				else
-				{
-					GameState temp = mGameState;
-					mGameState = mPreviousGameState;
-					mPreviousGameState = temp;
+					if (mGameState != GameState::DebugPause)
+					{
+						mPreviousGameState = mGameState;
+						mGameState = GameState::DebugPause;
+					}
+					else
+					{
+						GameState temp = mGameState;
+						mGameState = mPreviousGameState;
+						mPreviousGameState = temp;
+					}
 				}
 			}
 

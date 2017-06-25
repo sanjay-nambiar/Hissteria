@@ -20,7 +20,7 @@ namespace DirectXGame
 
 	const std::unordered_map<Snake::SnakeType, Snake::SnakeTypeConfig> Snake::SnakeTypeConfigMapping = {
 		{ SnakeType::Circular, { XMINT2(0, 0), 3.0f } },
-		{ SnakeType::ChainLink, { XMINT2(1, 0), 2.5f } }
+		{ SnakeType::ChainLink, { XMINT2(1, 0), 3.0f } }
 	};
 
 	Snake::Snake(SnakeType type, uint32_t bodyBlocks, XMFLOAT2 blockDimension, XMFLOAT2 heading,

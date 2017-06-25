@@ -7,6 +7,8 @@ using namespace std::chrono;
 
 namespace DirectXGame
 {
+	bool ProgramHelper::IsDebugEnabled = false;
+
 	const float ProgramHelper::Left = -50.0f;
 	const float ProgramHelper::Right = 50.0f;
 	const float ProgramHelper::Top = 50.0f;

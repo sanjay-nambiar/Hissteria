@@ -40,22 +40,26 @@ namespace DirectXGame
 			headingOffset.x = -1.0f;
 		}
 		
-		bool wasAPressed = false;
-		if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::A))
-		{
-			wasAPressed = true;
-		}
-
+		// Debug keys
+		bool wasPressedA = false;
 		bool wasPressedMinus = false;
-		if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::OemMinus))
-		{
-			wasPressedMinus = true;
-		}
-
 		bool wasPressedPlus = false;
-		if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::OemPlus))
+		if (ProgramHelper::IsDebugEnabled)
 		{
-			wasPressedPlus = true;
+			if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::A))
+			{
+				wasPressedA = true;
+			}
+
+			if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::OemMinus))
+			{
+				wasPressedMinus = true;
+			}
+
+			if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::OemPlus))
+			{
+				wasPressedPlus = true;
+			}
 		}
 
 		for (auto& snake : mSnakes)
@@ -66,7 +70,7 @@ namespace DirectXGame
 			}
 			snake->Update(timer);
 			
-			if (wasAPressed)
+			if (wasPressedA)
 			{
 				snake->AddBlocks(1, ColorHelper::Yellow);
 			}
