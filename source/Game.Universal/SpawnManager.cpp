@@ -14,7 +14,7 @@ namespace DirectXGame
 
 	SpawnManager::SpawnManager(std::uint32_t maxSpawns, std::shared_ptr<SpriteManager> spriteManager) :
 		GameComponent(nullptr),
-		mRandomRealDistribution(-45.0f, 45.0f), mRandomIntDistribution(0, 3),
+		mRandomRealDistribution(0, 100.0f), mRandomIntDistribution(0, 100),
 		mRandomGenerator(static_cast<uint32_t>(chrono::system_clock::now().time_since_epoch().count())),
 		mMaxSpawns(maxSpawns), mSpriteManager(spriteManager), mSecondsSinceLastSpawn(0.0f)
 	{
@@ -66,16 +66,13 @@ namespace DirectXGame
 	{
 		shared_ptr<Sprite> sprite = spawn->mSprite.lock();
 		auto transform = sprite->Transform();
-		XMFLOAT2 position(mRandomRealDistribution(mRandomGenerator), mRandomRealDistribution(mRandomGenerator));
+		XMFLOAT2 position = ProgramHelper::RandomLocationInsideBorder({spawn->ColliderRadius(), spawn->ColliderRadius()});
 		transform.SetPosition(position);
 		sprite->SetTransform(transform);
-		sprite->SetColor(XMFLOAT4((mRandomIntDistribution(mRandomGenerator) + 1) / 3.0f,
-			(mRandomIntDistribution(mRandomGenerator) + 1) / 3.0f,
-			(mRandomIntDistribution(mRandomGenerator) + 1) / 3.0f,
-			1.0f));
+		sprite->SetColor(ColorHelper::RandomColor());
 	}
 
-	void SpawnManager::KillSpawns(const std::vector<std::shared_ptr<Spawn>>& spawns)
+	void SpawnManager::UpdateSpawnLocations(const std::vector<std::shared_ptr<Spawn>>& spawns)
 	{
 		for (const auto& spawn : spawns)
 		{

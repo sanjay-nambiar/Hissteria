@@ -65,7 +65,7 @@ namespace DirectXGame
 
 	void SnakeManager::CheckSpawnCollision()
 	{
-		std::vector<std::shared_ptr<Spawn>> spawnsToKill;
+		std::vector<std::shared_ptr<Spawn>> spawnsToUpdate;
 		for (auto& snake : mSnakes)
 		{
 			const auto& head = snake->mBody.front();
@@ -79,7 +79,7 @@ namespace DirectXGame
 
 				if (distanceSq >= lengthSq)
 				{
-					spawnsToKill.push_back(spawn);
+					spawnsToUpdate.push_back(spawn);
 
 					switch (spawn->Type())
 					{
@@ -91,9 +91,9 @@ namespace DirectXGame
 			}
 		}
 
-		if (spawnsToKill.size() > 0)
+		if (spawnsToUpdate.size() > 0)
 		{
-			mSpawnManager->KillSpawns(spawnsToKill);
+			mSpawnManager->UpdateSpawnLocations(spawnsToUpdate);
 		}
 	}
 }

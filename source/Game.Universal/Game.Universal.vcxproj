@@ -249,7 +249,7 @@
     <ClInclude Include="BallManager.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="FieldManager.h" />
-    <ClInclude Include="ProgramSettings.h" />
+    <ClInclude Include="ProgramHelper.h" />
     <ClInclude Include="Spawn.h" />
     <ClInclude Include="GameMain.h" />
     <ClInclude Include="pch.h" />
@@ -267,7 +267,7 @@
     <ClCompile Include="BallManager.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="FieldManager.cpp" />
-    <ClCompile Include="ProgramSettings.cpp" />
+    <ClCompile Include="ProgramHelper.cpp" />
     <ClCompile Include="Spawn.cpp" />
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="pch.cpp">
