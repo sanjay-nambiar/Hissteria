@@ -16,7 +16,7 @@ namespace DirectXGame
 	{
 		XMFLOAT2 dimension = { 6.0f, 3.0f };
 		XMFLOAT2 heading = { 1.0f, 0.0f };
-		auto snake = make_shared<Snake>(Snake::SnakeType::ChainLink, 10, dimension, heading, mSpriteManager);
+		auto snake = make_shared<Snake>(Snake::SnakeType::ChainLink, 3, dimension, heading, mSpriteManager);
 		mSnakes.push_back(snake);
 	}
 
@@ -50,6 +50,11 @@ namespace DirectXGame
 			snake->Update(timer);
 		}
 
+		CheckSpawnCollision();
+	}
+
+	void SnakeManager::CheckSpawnCollision()
+	{
 		std::vector<std::shared_ptr<Spawn>> spawnsToKill;
 		for (auto& snake : mSnakes)
 		{
@@ -65,7 +70,13 @@ namespace DirectXGame
 				if (distanceSq >= lengthSq)
 				{
 					spawnsToKill.push_back(spawn);
-					snake->AddBlock();
+
+					switch (spawn->Type())
+					{
+					case Spawn::SpawnType::Food:
+						snake->AddBlock();
+						break;
+					}
 				}
 			}
 		}

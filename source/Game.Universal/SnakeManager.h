@@ -26,6 +26,8 @@ namespace DirectXGame
 		void Update(const DX::StepTimer& timer) override;
 
 	private:
+		void CheckSpawnCollision();
+
 		std::vector<std::shared_ptr<Snake>> mSnakes;
 		std::shared_ptr<SpriteManager> mSpriteManager;
 		std::shared_ptr<SpawnManager> mSpawnManager;
