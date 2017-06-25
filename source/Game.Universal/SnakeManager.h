@@ -34,7 +34,5 @@ namespace DirectXGame
 
 		std::shared_ptr<DX::KeyboardComponent> mKeyboardComponent;
 		std::shared_ptr<DX::GamePadComponent> mGamePadComponent;
-
-		
 	};
 }
