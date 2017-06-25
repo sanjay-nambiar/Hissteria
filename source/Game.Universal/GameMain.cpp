@@ -31,8 +31,12 @@ namespace DirectXGame
 		mFpsTextRenderer->SetVisible(ProgramHelper::IsDebugEnabled);
 		mComponents.push_back(mFpsTextRenderer);
 
-		mTextRenderer = make_shared<TextRenderer>(mDeviceResources);
-		mComponents.push_back(mTextRenderer);
+		for (const auto& config : ProgramHelper::PlayerConfigs)
+		{
+			mTextRenderers.push_back(make_shared<TextRenderer>(mDeviceResources));
+			mComponents.push_back(mTextRenderers.back());
+			mTextRenderers.back()->SetTextFormatting(config.mHeadColor, config.mScoreAnchorPoint);
+		}
 
 		auto spriteManager = make_shared<SpriteManager>(mDeviceResources, camera);
 		mComponents.push_back(spriteManager);
@@ -40,7 +44,7 @@ namespace DirectXGame
 		auto spawnManager = make_shared<SpawnManager>(1, spriteManager);
 		mComponents.push_back(spawnManager);
 
-		auto snakeManager = make_shared<SnakeManager>(mTextRenderer, spriteManager, spawnManager, mInputComponent);
+		auto snakeManager = make_shared<SnakeManager>(mTextRenderers, spriteManager, spawnManager, mInputComponent);
 		mComponents.push_back(snakeManager);
 
 		mTimer.SetFixedTimeStep(true);

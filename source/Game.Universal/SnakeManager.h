@@ -20,7 +20,7 @@ namespace DirectXGame
 	class SnakeManager final : public DX::GameComponent
 	{
 	public:
-		SnakeManager(const std::shared_ptr<DX::TextRenderer>& textRenderer, const std::shared_ptr<SpriteManager>& spriteManager,
+		SnakeManager(const std::vector<std::shared_ptr<DX::TextRenderer>>& textRenderers, const std::shared_ptr<SpriteManager>& spriteManager,
 			const std::shared_ptr<SpawnManager>& spawnManager, const std::shared_ptr<InputComponent>& gameCommands);
 		
 		void Update(const DX::StepTimer& timer) override;
@@ -39,7 +39,7 @@ namespace DirectXGame
 		float mVibrationPeriod;
 		float mElapsedVibrationTime;
 
-		std::shared_ptr<DX::TextRenderer> mScoreRenderer;
+		std::vector<std::shared_ptr<DX::TextRenderer>> mScoreRenderers;
 
 		std::shared_ptr<InputComponent> mInputComponent;
 	};

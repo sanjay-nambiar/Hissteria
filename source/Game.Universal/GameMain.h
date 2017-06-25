@@ -46,7 +46,7 @@ namespace DirectXGame
 		DX::StepTimer mTimer;
 		std::shared_ptr<InputComponent> mInputComponent;
 		std::shared_ptr<DX::FpsTextRenderer> mFpsTextRenderer;
-		std::shared_ptr<DX::TextRenderer> mTextRenderer;
+		std::vector<std::shared_ptr<DX::TextRenderer>> mTextRenderers;
 
 		GameState mGameState;
 		GameState mPreviousGameState;

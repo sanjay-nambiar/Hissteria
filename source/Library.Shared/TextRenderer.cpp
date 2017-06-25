@@ -1,71 +1,85 @@
 #include "pch.h"
 #include "TextRenderer.h"
 #include "DirectXHelper.h"
+#include "ColorHelper.h"
 
 using namespace Microsoft::WRL;
+using namespace std;
 
 namespace DX
 {
 	// Initializes D2D resources used for text rendering.
 	TextRenderer::TextRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
 		DrawableGameComponent(deviceResources),
-		m_text(L"")
+		mText(L""), mAnchorPoint(AnchorPoint::TopLeft), mFontName(L""), mFontSize(32.0f)
 	{
-		ZeroMemory(&m_textMetrics, sizeof(DWRITE_TEXT_METRICS));
+		ZeroMemory(&mTextMetrics, sizeof(DWRITE_TEXT_METRICS));
+		SetFont(L"Segoe UI");
+		SetTextFormatting(ColorHelper::White(), AnchorPoint::BottomRight);
+	}
 
-		// Create device independent resources
+	void TextRenderer::SetText(const std::wstring& text, std::uint32_t maxWidth, std::uint32_t maxHeight)
+	{
+		mText = text;
+
+		ComPtr<IDWriteTextLayout> textLayout;
+		DX::ThrowIfFailed(
+			mDeviceResources->GetDWriteFactory()->CreateTextLayout(
+				mText.c_str(),
+				(uint32)mText.length(),
+				mTextFormat.Get(),
+				static_cast<float>(maxWidth),
+				static_cast<float>(maxHeight),
+				&textLayout
+			)
+		);
+
+		DX::ThrowIfFailed(
+			textLayout.As(&mTextLayout)
+		);
+
+		DX::ThrowIfFailed(
+			mTextLayout->GetMetrics(&mTextMetrics)
+		);
+	}
+
+	void TextRenderer::SetFont(const std::wstring& fontName, const float fontSize)
+	{
+		mFontName = fontName;
+		mFontSize = fontSize;
+		
 		ComPtr<IDWriteTextFormat> textFormat;
 		DX::ThrowIfFailed(
 			mDeviceResources->GetDWriteFactory()->CreateTextFormat(
-				L"Segoe UI",
+				mFontName.c_str(),
 				nullptr,
 				DWRITE_FONT_WEIGHT_LIGHT,
 				DWRITE_FONT_STYLE_NORMAL,
 				DWRITE_FONT_STRETCH_NORMAL,
-				32.0f,
+				mFontSize,
 				L"en-US",
 				&textFormat
 			)
 		);
 
 		DX::ThrowIfFailed(
-			textFormat.As(&m_textFormat)
+			textFormat.As(&mTextFormat)
 		);
 
 		DX::ThrowIfFailed(
-			m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
+			mTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR)
 		);
 
 		DX::ThrowIfFailed(
-			mDeviceResources->GetD2DFactory()->CreateDrawingStateBlock(&m_stateBlock)
+			mDeviceResources->GetD2DFactory()->CreateDrawingStateBlock(&mStateBlock)
 		);
-
-		CreateDeviceDependentResources();
 	}
 
-	void TextRenderer::SetText(const std::wstring& text, std::uint32_t maxWidth, std::uint32_t maxHeight)
+	void TextRenderer::SetTextFormatting(const DirectX::XMFLOAT4& color, AnchorPoint anchorPoint)
 	{
-		m_text = text;
-
-		ComPtr<IDWriteTextLayout> textLayout;
-		DX::ThrowIfFailed(
-			mDeviceResources->GetDWriteFactory()->CreateTextLayout(
-				m_text.c_str(),
-				(uint32)m_text.length(),
-				m_textFormat.Get(),
-				maxWidth, // Max width of the input text.
-				maxHeight, // Max height of the input text.
-				&textLayout
-			)
-		);
-
-		DX::ThrowIfFailed(
-			textLayout.As(&m_textLayout)
-		);
-
-		DX::ThrowIfFailed(
-			m_textLayout->GetMetrics(&m_textMetrics)
-		);
+		mAnchorPoint = anchorPoint;
+		mColor = color;
+		CreateDeviceDependentResources();
 	}
 
 	// Renders a frame to the screen.
@@ -74,25 +88,40 @@ namespace DX
 		ID2D1DeviceContext* context = mDeviceResources->GetD2DDeviceContext();
 		Windows::Foundation::Size logicalSize = mDeviceResources->GetLogicalSize();
 
-		context->SaveDrawingState(m_stateBlock.Get());
+		context->SaveDrawingState(mStateBlock.Get());
 		context->BeginDraw();
 
-		// Position on the bottom right corner
-		D2D1::Matrix3x2F screenTranslation = D2D1::Matrix3x2F::Translation(
-			logicalSize.Width - m_textMetrics.layoutWidth,
-			logicalSize.Height - m_textMetrics.height
-		);
+		const float left = -350;
+		const float center = (logicalSize.Width / 2) - (mTextMetrics.layoutWidth / 2);
+		const float right = logicalSize.Width - mTextMetrics.layoutWidth - 50;
+		const float top = 0;
+		const float middle = (logicalSize.Height / 2) - (mTextMetrics.layoutHeight / 2);
+		const float bottom = logicalSize.Height - mTextMetrics.height;
 
-		context->SetTransform(screenTranslation * mDeviceResources->GetOrientationTransform2D());
+		const std::unordered_map<AnchorPoint, D2D1::Matrix3x2F> textAlignments =
+		{
+			{ AnchorPoint::TopLeft, D2D1::Matrix3x2F::Translation(left, top) },
+			{ AnchorPoint::Top, D2D1::Matrix3x2F::Translation(center, top) },
+			{ AnchorPoint::TopRight, D2D1::Matrix3x2F::Translation(right, top) },
+
+			{ AnchorPoint::Left, D2D1::Matrix3x2F::Translation(left, middle) },
+			{ AnchorPoint::Center, D2D1::Matrix3x2F::Translation(center, middle) },
+			{ AnchorPoint::Right, D2D1::Matrix3x2F::Translation(right, middle) },
+			
+			{ AnchorPoint::BottomLeft, D2D1::Matrix3x2F::Translation(left, bottom) },
+			{ AnchorPoint::Bottom, D2D1::Matrix3x2F::Translation(center, bottom) },
+			{ AnchorPoint::BottomRight, D2D1::Matrix3x2F::Translation(right, bottom) },
+		};
+		context->SetTransform(textAlignments.at(mAnchorPoint) * mDeviceResources->GetOrientationTransform2D());
 
 		DX::ThrowIfFailed(
-			m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING)
+			mTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING)
 		);
 
 		context->DrawTextLayout(
 			D2D1::Point2F(0.f, 0.f),
-			m_textLayout.Get(),
-			m_whiteBrush.Get()
+			mTextLayout.Get(),
+			mColoredBrush.Get()
 		);
 
 		// Ignore D2DERR_RECREATE_TARGET here. This error indicates that the device
@@ -103,17 +132,17 @@ namespace DX
 			DX::ThrowIfFailed(hr);
 		}
 
-		context->RestoreDrawingState(m_stateBlock.Get());
+		context->RestoreDrawingState(mStateBlock.Get());
 	}
 
 	void TextRenderer::CreateDeviceDependentResources()
 	{
 		DX::ThrowIfFailed(
-			mDeviceResources->GetD2DDeviceContext()->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &m_whiteBrush)
+			mDeviceResources->GetD2DDeviceContext()->CreateSolidColorBrush(D2D1::ColorF(mColor.x, mColor.y, mColor.z), &mColoredBrush)
 		);
 	}
 	void TextRenderer::ReleaseDeviceDependentResources()
 	{
-		m_whiteBrush.Reset();
+		mColoredBrush.Reset();
 	}
 }

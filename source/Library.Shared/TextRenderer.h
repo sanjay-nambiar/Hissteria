@@ -10,6 +10,19 @@ namespace DX
 	class TextRenderer : public DrawableGameComponent
 	{
 	public:
+		enum class AnchorPoint
+		{
+			TopLeft,
+			Top,
+			TopRight,
+			Left,
+			Center,
+			Right,
+			BottomLeft,
+			Bottom,
+			BottomRight
+		};
+
 		TextRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 
 		virtual void CreateDeviceDependentResources() override;
@@ -17,12 +30,19 @@ namespace DX
 		virtual void Render(const DX::StepTimer& timer) override;
 
 		void SetText(const std::wstring& text, std::uint32_t maxWidth, std::uint32_t maxHeight);
+		void SetFont(const std::wstring& fontName, float fontSize = 32.0f);
+		void SetTextFormatting(const DirectX::XMFLOAT4& color, AnchorPoint anchorPoint);
 	private:
-		std::wstring                                    m_text;
-		DWRITE_TEXT_METRICS	                            m_textMetrics;
-		Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>    m_whiteBrush;
-		Microsoft::WRL::ComPtr<ID2D1DrawingStateBlock1> m_stateBlock;
-		Microsoft::WRL::ComPtr<IDWriteTextLayout3>      m_textLayout;
-		Microsoft::WRL::ComPtr<IDWriteTextFormat2>      m_textFormat;
+		std::wstring                                    mText;
+		DWRITE_TEXT_METRICS	                            mTextMetrics;
+		Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>    mColoredBrush;
+		Microsoft::WRL::ComPtr<ID2D1DrawingStateBlock1> mStateBlock;
+		Microsoft::WRL::ComPtr<IDWriteTextLayout3>      mTextLayout;
+		Microsoft::WRL::ComPtr<IDWriteTextFormat2>      mTextFormat;
+
+		AnchorPoint mAnchorPoint;
+		std::wstring mFontName;
+		float mFontSize;
+		DirectX::XMFLOAT4 mColor;
 	};
 }

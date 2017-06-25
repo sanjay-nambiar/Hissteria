@@ -3,6 +3,12 @@
 #include "MatrixHelper.h"
 #include <cstdint>
 
+namespace DX
+{
+	class TextRenderer;
+	enum class TextRenderer::AnchorPoint;
+}
+
 namespace DirectXGame
 {
 	class GameMain;
@@ -22,6 +28,7 @@ namespace DirectXGame
 			Snake::SnakeType mType;
 			DirectX::XMFLOAT4 mHeadColor;
 			DirectX::XMFLOAT4 mBodyColor;
+			DX::TextRenderer::AnchorPoint mScoreAnchorPoint;
 		};
 
 		static const DirectX::XMFLOAT2 RandomLocationInsideBorder(const DirectX::XMFLOAT2& dimension);

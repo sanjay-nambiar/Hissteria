@@ -30,6 +30,7 @@ namespace DirectXGame
 			Snake::SnakeType::ChainLink,
 			ColorHelper::Blue(),
 			ColorHelper::Green(),
+			TextRenderer::AnchorPoint::TopLeft
 		},
 
 		// Player 2
@@ -42,6 +43,7 @@ namespace DirectXGame
 			Snake::SnakeType::ChainLink,
 			ColorHelper::Purple(),
 			ColorHelper::White(),
+			TextRenderer::AnchorPoint::TopRight
 		}
 	};
 
