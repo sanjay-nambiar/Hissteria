@@ -18,7 +18,7 @@ namespace DirectXGame
 			Star
 		};
 
-		Snake(SnakeType type, std::uint32_t bodyBlocks, DirectX::XMFLOAT2 blockDimension, DirectX::XMFLOAT2 heading,
+		Snake(SnakeType type, std::uint32_t bodyBlocks, const DirectX::XMFLOAT2& blockDimension, const DirectX::XMFLOAT2& position, const DirectX::XMFLOAT2& heading,
 			const DirectX::XMFLOAT4& headColor, const DirectX::XMFLOAT4& bodyColor, const std::shared_ptr<SpriteManager>& spriteManager);
 
 		void SetHeadingDirection(DirectX::XMFLOAT2 headingDirection);

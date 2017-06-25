@@ -13,10 +13,12 @@ namespace DirectXGame
 		GameComponent(nullptr),
 		mSpriteManager(spriteManager), mSpawnManager(spawnManager), mGameCommands(gameCommands)
 	{
-		XMFLOAT2 dimension = { 6.0f, 3.0f };
-		XMFLOAT2 heading = { 1.0f, 0.0f };
-		auto snake = make_shared<Snake>(Snake::SnakeType::ChainLink, 3, dimension, heading, ColorHelper::Blue, ColorHelper::Green, mSpriteManager);
-		mSnakes.push_back(snake);
+		for (const auto& config : ProgramHelper::PlayerConfigs)
+		{
+			auto snake = make_shared<Snake>(config.mType, config.mBlocks, config.mDimension, config.mPosition, config.mHeading,
+				config.mHeadColor, config.mBodyColor, mSpriteManager);
+			mSnakes.push_back(snake);
+		}
 	}
 
 	void SnakeManager::Update(const DX::StepTimer& timer)
@@ -61,17 +63,17 @@ namespace DirectXGame
 			
 			if (IsDebugAddBodyBlockActive)
 			{
-				snake->AddBlocks(1, ColorHelper::Yellow);
+				snake->AddBlocks(1, ColorHelper::Yellow());
 			}
 
 			if (IsDebugShrinkActive)
 			{
-				snake->ShrinkSnake(3, ColorHelper::White);
+				snake->ShrinkSnake(3, ColorHelper::White());
 			}
 
 			if (IsDebugExpandActive)
 			{
-				snake->AddBlocks(1000, ColorHelper::Purple);
+				snake->AddBlocks(1000, ColorHelper::Purple());
 			}
 		}
 
@@ -120,8 +122,8 @@ namespace DirectXGame
 					switch (spawn->Type())
 					{
 					case Spawn::SpawnType::Grow:
-						snake->AddBlocks(1, ColorHelper::Yellow);
-						headSprite->SetColorInterpolation(ColorHelper::Yellow, 0.2f, 0.2f, 3);
+						snake->AddBlocks(1, ColorHelper::Yellow());
+						headSprite->SetColorInterpolation(ColorHelper::Yellow(), 0.2f, 0.2f, 3);
 						break;
 					}
 				}
@@ -139,7 +141,7 @@ namespace DirectXGame
 		vector<shared_ptr<Snake>> snakesToKill;
 		for (std::uint32_t collider = 0; collider < mSnakes.size(); ++collider)
 		{
-			for (std::uint32_t collidee = collider; collidee < mSnakes.size(); ++collidee)
+			for (std::uint32_t collidee = 0; collidee < mSnakes.size(); ++collidee)
 			{
 				if (mSnakes[collider]->CheckCollisionWithSnake(mSnakes[collidee]))
 				{

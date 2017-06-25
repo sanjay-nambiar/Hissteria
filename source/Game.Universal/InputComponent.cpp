@@ -13,12 +13,22 @@ namespace DirectXGame
 {
 	const unordered_map<uint32_t, InputComponent::CommandInfo> InputComponent::CommandMapping =
 	{
+		// Game inputs
 		{ KeyOf(0, Command::GameExit),{ KeyCheckType::WasPressedThisFrame, Keys::Escape, GamePadButtons::Back, MouseButtons::Middle } },
-		{ KeyOf(1, Command::MoveLeft), { KeyCheckType::WasPressedThisFrame, Keys::Left, GamePadButtons::None, MouseButtons::None} },
-		{ KeyOf(1, Command::MoveRight), { KeyCheckType::WasPressedThisFrame, Keys::Right, GamePadButtons::None, MouseButtons::None } },
-		{ KeyOf(1, Command::MoveUp), { KeyCheckType::WasPressedThisFrame, Keys::Up, GamePadButtons::None, MouseButtons::None } },
-		{ KeyOf(1, Command::MoveDown), { KeyCheckType::WasPressedThisFrame, Keys::Down, GamePadButtons::None, MouseButtons::None } },
 
+		// Player 1 inputs
+		{ KeyOf(1, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::Up, GamePadButtons::None, MouseButtons::None } },
+		{ KeyOf(1, Command::MoveLeft), { KeyCheckType::WasPressedThisFrame, Keys::Left, GamePadButtons::None, MouseButtons::None} },
+		{ KeyOf(1, Command::MoveDown),{ KeyCheckType::WasPressedThisFrame, Keys::Down, GamePadButtons::None, MouseButtons::None } },
+		{ KeyOf(1, Command::MoveRight), { KeyCheckType::WasPressedThisFrame, Keys::Right, GamePadButtons::None, MouseButtons::None } },
+
+		// Player 2 inputs
+		{ KeyOf(2, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::W, GamePadButtons::None, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveLeft),{ KeyCheckType::WasPressedThisFrame, Keys::A, GamePadButtons::None, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveDown),{ KeyCheckType::WasPressedThisFrame, Keys::S, GamePadButtons::None, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveRight),{ KeyCheckType::WasPressedThisFrame, Keys::D, GamePadButtons::None, MouseButtons::None } },
+
+		// Debug inputs
 		{ KeyOf(0, Command::MasterDebugToggle), { KeyCheckType::WasPressedThisFrame, Keys::OemTilde, GamePadButtons::None, MouseButtons::None } },
 		{ KeyOf(0, Command::DebugPause), { KeyCheckType::WasPressedThisFrame, Keys::Space, GamePadButtons::None, MouseButtons::None } },
 		{ KeyOf(0, Command::DebugStepForward), { KeyCheckType::WasPressedThisFrame, Keys::F10, GamePadButtons::None, MouseButtons::None } },

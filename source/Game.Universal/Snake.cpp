@@ -23,7 +23,7 @@ namespace DirectXGame
 		{ SnakeType::ChainLink, { XMINT2(1, 0), 3.0f } }
 	};
 
-	Snake::Snake(SnakeType type, uint32_t bodyBlocks, XMFLOAT2 blockDimension, XMFLOAT2 heading,
+	Snake::Snake(SnakeType type, uint32_t bodyBlocks, const XMFLOAT2& blockDimension, const XMFLOAT2& position, const XMFLOAT2& heading,
 		const XMFLOAT4& headColor, const XMFLOAT4& bodyColor, const shared_ptr<SpriteManager>& spriteManager) :
 		mDimension(blockDimension), mHeadingDirection(heading),
 		mSpeed(MaxSpeed), mColliderRadius(SnakeTypeConfigMapping.at(type).mColliderRadius), mType(type),
@@ -32,7 +32,7 @@ namespace DirectXGame
 		assert(bodyBlocks > 0 && bodyBlocks < MaxBodyBlocks);
 		mBody.reserve(bodyBlocks);
 
-		XMFLOAT2 positionFloat = { 0.0f, 0.0f };
+		XMFLOAT2 positionFloat = position;
 		XMVECTOR centerOffset = { 0.5f, 0.5f };
 
 		// calculate block offset and offset position to sprite's center
@@ -51,7 +51,7 @@ namespace DirectXGame
 		sprite->SetColor(mHeadColor);
 
 		auto transform = Transform2D();
-		XMVECTOR position = centerOffset;
+		XMVECTOR positionVector = XMLoadFloat2(&positionFloat);
 
 		float rotation = XMVectorGetX(XMVector2AngleBetweenNormals(XMLoadFloat2(&ZeroAngleVector), XMLoadFloat2(&mHeadingDirection)));
 		if (mHeadingDirection.y < 0)
@@ -60,7 +60,7 @@ namespace DirectXGame
 		}
 		transform.SetRotation(rotation);
 
-		XMStoreFloat2(&positionFloat, position);
+		XMStoreFloat2(&positionFloat, positionVector);
 		transform.SetPosition(positionFloat);
 		transform.SetScale(BlockScale);
 		sprite->SetTransform(transform);
@@ -86,7 +86,7 @@ namespace DirectXGame
 			BodyBlock block;
 			block.mSprite = mSpriteManager->CreateSprite(SnakeTypeConfigMapping.at(mType).mSpriteIndex);
 			auto sprite = block.mSprite.lock();
-			sprite->SetColor(ColorHelper::Green);
+			sprite->SetColor(mBodyColor);
 
 			auto transform = Transform2D();
 			const auto& leadingSprite = mBody.back().mSprite.lock();
@@ -183,7 +183,7 @@ namespace DirectXGame
 				XMVECTOR testPoint = position + (XMLoadFloat2(&mHeadingDirection) * length);
 				if (XMVectorGetX(XMVector2LengthSq(testPoint - otherPosition)) < otherRadiusSq)
 				{
-					headSprite->SetColorInterpolation(ColorHelper::Red, BlinkForwardTime, BlinkBackwardTime, BlinkCount);
+					headSprite->SetColorInterpolation(ColorHelper::Red(), BlinkForwardTime, BlinkBackwardTime, BlinkCount);
 					return true;
 				}
 			}

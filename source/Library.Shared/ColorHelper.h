@@ -18,21 +18,21 @@ namespace DX
 		ColorHelper& operator=(const ColorHelper&) = delete;
 		ColorHelper& operator=(ColorHelper&&) = delete;
 
-		static const DirectX::XMFLOAT4 White;
-		static const DirectX::XMFLOAT4 Gray;
-		static const DirectX::XMFLOAT4 Black;
-		static const DirectX::XMFLOAT4 Red;
-		static const DirectX::XMFLOAT4 Maroon;
-		static const DirectX::XMFLOAT4 Yellow;
-		static const DirectX::XMFLOAT4 Olive;
-		static const DirectX::XMFLOAT4 Lime;
-		static const DirectX::XMFLOAT4 Green;
-		static const DirectX::XMFLOAT4 Aqua;
-		static const DirectX::XMFLOAT4 Teal;
-		static const DirectX::XMFLOAT4 Blue;
-		static const DirectX::XMFLOAT4 Navy;
-		static const DirectX::XMFLOAT4 Fuchsia;
-		static const DirectX::XMFLOAT4 Purple;
+		static const DirectX::XMFLOAT4 White();
+		static const DirectX::XMFLOAT4 Gray();
+		static const DirectX::XMFLOAT4 Black();
+		static const DirectX::XMFLOAT4 Red();
+		static const DirectX::XMFLOAT4 Maroon();
+		static const DirectX::XMFLOAT4 Yellow();
+		static const DirectX::XMFLOAT4 Olive();
+		static const DirectX::XMFLOAT4 Lime();
+		static const DirectX::XMFLOAT4 Green();
+		static const DirectX::XMFLOAT4 Aqua();
+		static const DirectX::XMFLOAT4 Teal();
+		static const DirectX::XMFLOAT4 Blue();
+		static const DirectX::XMFLOAT4 Navy();
+		static const DirectX::XMFLOAT4 Fuchsia();
+		static const DirectX::XMFLOAT4 Purple();
 
 	private:
 		static std::random_device sDevice;
