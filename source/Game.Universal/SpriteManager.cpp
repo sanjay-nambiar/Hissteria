@@ -132,11 +132,16 @@ namespace DirectXGame
 		mTextureSampler.Reset();
 	}
 
-	void SpriteManager::Update(const StepTimer&)
+	void SpriteManager::Update(const StepTimer& timer)
 	{
 		if (!mLoadingComplete)
 		{
 			return;
+		}
+
+		for (auto& sprite : mSprites)
+		{
+			sprite->Update(timer);
 		}
 	}
 

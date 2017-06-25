@@ -18,13 +18,15 @@ namespace DirectXGame
 			Star
 		};
 
-		Snake(SnakeType type, std::uint32_t bodyBlocks, DirectX::XMFLOAT2 blockDimension, DirectX::XMFLOAT2 heading, const std::shared_ptr<SpriteManager>& spriteManager);
+		Snake(SnakeType type, std::uint32_t bodyBlocks, DirectX::XMFLOAT2 blockDimension, DirectX::XMFLOAT2 heading,
+			const DirectX::XMFLOAT4& headColor, const DirectX::XMFLOAT4& bodyColor, const std::shared_ptr<SpriteManager>& spriteManager);
 
 		void SetHeadingDirection(DirectX::XMFLOAT2 headingDirection);
 
 		const DirectX::XMFLOAT2& HeadingDirection();
 		SnakeType Type() const;
 		float ColliderRadius() const;
+		bool CheckCollisionWithSnake(const std::shared_ptr<Snake>& snake);
 
 		void Update(const DX::StepTimer& timer);
 	private:
@@ -39,8 +41,10 @@ namespace DirectXGame
 			const float mColliderRadius;
 		};
 
-		void AddBlock();
+		void AddBlocks(std::uint32_t blocks);
+		void AddBlocks(std::uint32_t blocks, const DirectX::XMFLOAT4& mBlinkColor);
 		void ShrinkSnake(std::uint32_t newBlockCount);
+		void ShrinkSnake(std::uint32_t newBlockCount, const DirectX::XMFLOAT4& mBlinkColor);
 
 		SnakeType mType;
 		std::vector<BodyBlock> mBody;
@@ -49,12 +53,17 @@ namespace DirectXGame
 		float mSpeed;
 		const float mColliderRadius;
 		float mBlockSeparation;
+		DirectX::XMFLOAT4 mHeadColor;
+		DirectX::XMFLOAT4 mBodyColor;
 
 		std::shared_ptr<SpriteManager> mSpriteManager;
 
 		static const std::uint32_t MaxBodyBlocks;
 		static const float MaxSpeed;
 		static const float MaxForce;
+		static const float BlinkForwardTime;
+		static const float BlinkBackwardTime;
+		static const std::uint32_t BlinkCount;
 		static const DirectX::XMFLOAT2 BlockScale;
 		static const DirectX::XMFLOAT2 ZeroAngleVector;
 		static const std::unordered_map<SnakeType, SnakeTypeConfig> SnakeTypeConfigMapping;

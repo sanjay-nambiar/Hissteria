@@ -6,11 +6,21 @@ using namespace DirectX::PackedVector;
 
 namespace DX
 {
+	const XMFLOAT4 ColorHelper::White = { 1.0f, 1.0f, 1.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Gray = { 0.5f, 0.5f, 0.5f, 1.0f };
 	const XMFLOAT4 ColorHelper::Black = { 0.0f, 0.0f, 0.0f, 1.0f };
 	const XMFLOAT4 ColorHelper::Red = { 1.0f, 0.0f, 0.0f, 1.0f };
-	const XMFLOAT4 ColorHelper::Green = { 0.0f, 1.0f, 0.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Maroon = { 0.5f, 0.0f, 0.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Yellow = { 1.0f, 1.0f, 0.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Olive = { 0.5f, 0.5f, 0.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Lime = { 0.0f, 1.0f, 0.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Green = { 0.0f, 0.5f, 0.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Aqua = { 0.0f, 1.0f, 1.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Teal = { 0.0f, 0.5f, 0.5f, 1.0f };
 	const XMFLOAT4 ColorHelper::Blue = { 0.0f, 0.0f, 1.0f, 1.0f };
-	const XMFLOAT4 ColorHelper::White = { 1.0f, 1.0f, 1.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Navy = { 0.0f, 0.0f, 0.5f, 1.0f };
+	const XMFLOAT4 ColorHelper::Fuchsia = { 1.0f, 0.0f, 1.0f, 1.0f };
+	const XMFLOAT4 ColorHelper::Purple = { 0.5f, 0.0f, 0.5f, 1.0f };
 
 	std::random_device ColorHelper::sDevice;
 	std::default_random_engine ColorHelper::sGenerator(sDevice());

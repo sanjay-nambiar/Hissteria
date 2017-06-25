@@ -3,26 +3,31 @@
 
 using namespace DirectX;
 using namespace DX;
+using namespace std;
 
 namespace DirectXGame
 {
 	const std::uint32_t Snake::MaxBodyBlocks = 10;
 	const float Snake::MaxSpeed = 50.0f;
 	const float Snake::MaxForce = 5.0f;
+	
+	const float Snake::BlinkForwardTime = 0.2f;
+	const float Snake::BlinkBackwardTime = 0.2f;
+	const uint32_t Snake::BlinkCount = 3;
 
 	const XMFLOAT2 Snake::BlockScale = { 3.0f, 3.0f };
 	const XMFLOAT2 Snake::ZeroAngleVector = { 1.0f, 0.0f };
 
 	const std::unordered_map<Snake::SnakeType, Snake::SnakeTypeConfig> Snake::SnakeTypeConfigMapping = {
 		{ SnakeType::Circular, { XMINT2(0, 0), 3.0f } },
-		{ SnakeType::ChainLink, { XMINT2(1, 0), 3.0f } }
+		{ SnakeType::ChainLink, { XMINT2(1, 0), 2.5f } }
 	};
 
-
-	Snake::Snake(SnakeType type, std::uint32_t bodyBlocks, XMFLOAT2 blockDimension, XMFLOAT2 heading, const std::shared_ptr<SpriteManager>& spriteManager) :
+	Snake::Snake(SnakeType type, uint32_t bodyBlocks, XMFLOAT2 blockDimension, XMFLOAT2 heading,
+		const XMFLOAT4& headColor, const XMFLOAT4& bodyColor, const shared_ptr<SpriteManager>& spriteManager) :
 		mDimension(blockDimension), mHeadingDirection(heading),
 		mSpeed(MaxSpeed), mColliderRadius(SnakeTypeConfigMapping.at(type).mColliderRadius), mType(type),
-		mSpriteManager(spriteManager), mBlockSeparation(0.0f)
+		mSpriteManager(spriteManager), mBlockSeparation(0.0f), mHeadColor(headColor), mBodyColor(bodyColor)
 	{
 		assert(bodyBlocks > 0 && bodyBlocks < MaxBodyBlocks);
 		mBody.reserve(bodyBlocks);
@@ -43,7 +48,7 @@ namespace DirectXGame
 		BodyBlock block;
 		block.mSprite = mSpriteManager->CreateSprite(SnakeTypeConfigMapping.at(type).mSpriteIndex);
 		auto sprite = block.mSprite.lock();
-		sprite->SetColor(ColorHelper::Blue);
+		sprite->SetColor(mHeadColor);
 
 		auto transform = Transform2D();
 		XMVECTOR position = centerOffset;
@@ -61,46 +66,57 @@ namespace DirectXGame
 		sprite->SetTransform(transform);
 		mBody.emplace_back(block);
 
-		for (std::uint32_t i = 1; i < bodyBlocks; ++i)
-		{
-			AddBlock();
-		}
+		AddBlocks(bodyBlocks - 1);
 	}
 
-	void Snake::AddBlock()
+	void Snake::AddBlocks(std::uint32_t blocks)
 	{
-		if (mBody.size() >= MaxBodyBlocks)
+		AddBlocks(blocks, mBodyColor);
+	}
+
+	void Snake::AddBlocks(std::uint32_t blocks, const DirectX::XMFLOAT4& mBlinkColor)
+	{
+		for (std::uint32_t n = 0; n < blocks; ++n)
 		{
-			return;
+			if (mBody.size() >= MaxBodyBlocks)
+			{
+				return;
+			}
+
+			BodyBlock block;
+			block.mSprite = mSpriteManager->CreateSprite(SnakeTypeConfigMapping.at(mType).mSpriteIndex);
+			auto sprite = block.mSprite.lock();
+			sprite->SetColor(ColorHelper::Green);
+
+			auto transform = Transform2D();
+			const auto& leadingSprite = mBody.back().mSprite.lock();
+			XMVECTOR position = XMLoadFloat2(&leadingSprite->Transform().Position());
+
+			float rotation = leadingSprite->Transform().Rotation();
+			transform.SetRotation(rotation);
+			XMMATRIX rotationTransform = XMMatrixAffineTransformation2D(XMLoadFloat2(&Vector2Helper::One), XMLoadFloat2(&Vector2Helper::Zero),
+				rotation, XMLoadFloat2(&Vector2Helper::Zero));
+			XMVECTOR headingVector = XMVector2Transform(XMLoadFloat2(&ZeroAngleVector), rotationTransform);
+			XMVECTOR blockOffset = -(headingVector * XMLoadFloat2(&mDimension));
+			position += blockOffset;
+
+			XMFLOAT2 positionFloat;
+			XMStoreFloat2(&positionFloat, position);
+			transform.SetPosition(positionFloat);
+			transform.SetScale(BlockScale);
+			sprite->SetTransform(transform);
+			sprite->SetColorInterpolation(mBlinkColor, BlinkForwardTime, BlinkBackwardTime, BlinkCount);
+
+			mBody.emplace_back(block);
 		}
-
-		BodyBlock block;
-		block.mSprite = mSpriteManager->CreateSprite(SnakeTypeConfigMapping.at(mType).mSpriteIndex);
-		auto sprite = block.mSprite.lock();
-		sprite->SetColor(ColorHelper::Green);
-
-		auto transform = Transform2D();
-		const auto& leadingSprite = mBody.back().mSprite.lock();
-		XMVECTOR position = XMLoadFloat2(&leadingSprite->Transform().Position());
-
-		float rotation = leadingSprite->Transform().Rotation();
-		transform.SetRotation(rotation);
-		XMMATRIX rotationTransform = XMMatrixAffineTransformation2D(XMLoadFloat2(&Vector2Helper::One), XMLoadFloat2(&Vector2Helper::Zero),
-			rotation, XMLoadFloat2(&Vector2Helper::Zero));
-		XMVECTOR headingVector = XMVector2Transform(XMLoadFloat2(&ZeroAngleVector), rotationTransform);
-		XMVECTOR blockOffset = -(headingVector * XMLoadFloat2(&mDimension));
-		position += blockOffset;
-
-		XMFLOAT2 positionFloat;
-		XMStoreFloat2(&positionFloat, position);
-		transform.SetPosition(positionFloat);
-		transform.SetScale(BlockScale);
-		sprite->SetTransform(transform);
-
-		mBody.emplace_back(block);
 	}
 
 	void Snake::ShrinkSnake(std::uint32_t newBlockCount)
+	{
+		ShrinkSnake(newBlockCount, mBodyColor);
+	}
+
+	void Snake::ShrinkSnake(std::uint32_t newBlockCount, const DirectX::XMFLOAT4& mBlinkColor)
 	{
 		if (newBlockCount > 0 && newBlockCount <= mBody.size())
 		{
@@ -109,6 +125,11 @@ namespace DirectXGame
 				mSpriteManager->RemoveSprite(mBody[index].mSprite);
 			}
 			mBody.erase(mBody.begin() + newBlockCount, mBody.end());
+
+			for (auto& block : mBody)
+			{
+				block.mSprite.lock()->SetColorInterpolation(mBlinkColor, BlinkForwardTime, BlinkBackwardTime, BlinkCount);
+			}
 		}
 	}
 
@@ -140,6 +161,34 @@ namespace DirectXGame
 	const DirectX::XMFLOAT2& Snake::HeadingDirection()
 	{
 		return mHeadingDirection;
+	}
+
+	bool Snake::CheckCollisionWithSnake(const std::shared_ptr<Snake>& snake)
+	{
+		const auto& headSprite = mBody.front().mSprite.lock();
+		const auto position = XMLoadFloat2(&headSprite->Transform().Position());
+		float distance = (snake->ColliderRadius() + mColliderRadius);
+		float otherRadiusSq = snake->ColliderRadius();
+		otherRadiusSq *= otherRadiusSq;
+
+		// if checking collision with self, start at index 1, else start at index 0
+		std::uint32_t index = (snake.get() != this) ? 0 : 1;
+		for (; index < snake->mBody.size(); ++index)
+		{
+			const auto& body = snake->mBody[index];
+			XMVECTOR otherPosition = XMLoadFloat2(&body.mSprite.lock()->Transform().Position());
+			float length = XMVectorGetX(XMVector2Length(position - otherPosition));
+			if (distance >= length)
+			{
+				XMVECTOR testPoint = position + (XMLoadFloat2(&mHeadingDirection) * length);
+				if (XMVectorGetX(XMVector2LengthSq(testPoint - otherPosition)) < otherRadiusSq)
+				{
+					headSprite->SetColorInterpolation(ColorHelper::Red, BlinkForwardTime, BlinkBackwardTime, BlinkCount);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	void Snake::Update(const StepTimer& timer)

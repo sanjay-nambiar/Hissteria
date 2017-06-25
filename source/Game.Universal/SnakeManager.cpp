@@ -16,7 +16,7 @@ namespace DirectXGame
 	{
 		XMFLOAT2 dimension = { 6.0f, 3.0f };
 		XMFLOAT2 heading = { 1.0f, 0.0f };
-		auto snake = make_shared<Snake>(Snake::SnakeType::ChainLink, 3, dimension, heading, mSpriteManager);
+		auto snake = make_shared<Snake>(Snake::SnakeType::ChainLink, 3, dimension, heading, ColorHelper::Blue, ColorHelper::Green, mSpriteManager);
 		mSnakes.push_back(snake);
 	}
 
@@ -52,6 +52,12 @@ namespace DirectXGame
 			wasPressedMinus = true;
 		}
 
+		bool wasPressedPlus = false;
+		if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::OemPlus))
+		{
+			wasPressedPlus = true;
+		}
+
 		for (auto& snake : mSnakes)
 		{
 			if ((headingOffset.x + headingOffset.y) != 0.0f)
@@ -62,16 +68,22 @@ namespace DirectXGame
 			
 			if (wasAPressed)
 			{
-				snake->AddBlock();
+				snake->AddBlocks(1, ColorHelper::Yellow);
 			}
 
 			if (wasPressedMinus)
 			{
-				snake->ShrinkSnake(3);
+				snake->ShrinkSnake(3, ColorHelper::White);
+			}
+
+			if (wasPressedPlus)
+			{
+				snake->AddBlocks(1000, ColorHelper::Purple);
 			}
 		}
 
 		CheckSpawnCollision();
+		SnakeToSnakeCollision();
 	}
 
 	void SnakeManager::CheckSpawnCollision()
@@ -79,8 +91,8 @@ namespace DirectXGame
 		std::vector<std::shared_ptr<Spawn>> spawnsToUpdate;
 		for (auto& snake : mSnakes)
 		{
-			const auto& head = snake->mBody.front();
-			const auto& snakePosition = head.mSprite.lock()->Transform().Position();
+			const auto& headSprite = snake->mBody.front().mSprite.lock();
+			const auto& snakePosition = headSprite->Transform().Position();
 
 			for (const auto& spawn : mSpawnManager->Spawns())
 			{
@@ -95,7 +107,8 @@ namespace DirectXGame
 					switch (spawn->Type())
 					{
 					case Spawn::SpawnType::Food:
-						snake->AddBlock();
+						snake->AddBlocks(1, ColorHelper::Yellow);
+						headSprite->SetColorInterpolation(ColorHelper::Yellow, 0.2f, 0.2f, 3);
 						break;
 					}
 				}
@@ -105,6 +118,26 @@ namespace DirectXGame
 		if (spawnsToUpdate.size() > 0)
 		{
 			mSpawnManager->UpdateSpawnLocations(spawnsToUpdate);
+		}
+	}
+
+	void SnakeManager::SnakeToSnakeCollision()
+	{
+		vector<shared_ptr<Snake>> snakesToKill;
+		for (std::uint32_t collider = 0; collider < mSnakes.size(); ++collider)
+		{
+			for (std::uint32_t collidee = collider; collidee < mSnakes.size(); ++collidee)
+			{
+				if (mSnakes[collider]->CheckCollisionWithSnake(mSnakes[collidee]))
+				{
+					snakesToKill.push_back(mSnakes[collider]);
+				}
+			}
+		}
+
+		if (snakesToKill.size() > 0)
+		{
+			return;
 		}
 	}
 }

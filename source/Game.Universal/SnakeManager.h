@@ -27,6 +27,7 @@ namespace DirectXGame
 
 	private:
 		void CheckSpawnCollision();
+		void SnakeToSnakeCollision();
 
 		std::vector<std::shared_ptr<Snake>> mSnakes;
 		std::shared_ptr<SpriteManager> mSpriteManager;
