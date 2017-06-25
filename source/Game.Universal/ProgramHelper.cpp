@@ -19,6 +19,7 @@ namespace DirectXGame
 	{
 		// Player 1
 		{
+			"Blue",
 			3,
 			{ 6.0f, 3.0f },
 			{ -50.0f, 40.0f },
@@ -30,6 +31,7 @@ namespace DirectXGame
 
 		// Player 2
 		{
+			"Purple",
 			3,
 			{ 6.0f, 3.0f },
 			{ 50.0f, -40.0f },

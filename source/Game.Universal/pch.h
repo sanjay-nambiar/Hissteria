@@ -37,6 +37,7 @@
 #include "DrawableGameComponent.h"
 #include "DirectXHelper.h"
 #include "FpsTextRenderer.h"
+#include "TextRenderer.h"
 #include "Camera.h"
 #include "OrthographicCamera.h"
 #include "Transform2D.h"

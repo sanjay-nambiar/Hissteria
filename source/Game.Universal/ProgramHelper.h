@@ -14,6 +14,7 @@ namespace DirectXGame
 	public:
 		struct PlayerConfig
 		{
+			std::string mName;
 			std::uint32_t mBlocks;
 			DirectX::XMFLOAT2 mDimension;
 			DirectX::XMFLOAT2 mPosition;

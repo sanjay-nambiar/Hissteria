@@ -18,6 +18,7 @@ namespace DirectXGame
 		{
 			auto snake = make_shared<Snake>(config.mType, config.mBlocks, config.mDimension, config.mPosition, config.mHeading,
 				config.mHeadColor, config.mBodyColor, mSpriteManager);
+			snake->mName = config.mName;
 			mSnakes.push_back(snake);
 		}
 	}
@@ -130,6 +131,7 @@ namespace DirectXGame
 					{
 					case Spawn::SpawnType::Grow:
 						snake->AddBlocks(1, ColorHelper::Yellow());
+						snake->mScore += 5;
 						headSprite->SetColorInterpolation(ColorHelper::Yellow(), 0.2f, 0.2f, 3);
 						VibrateController(0.2f, 0.15f, 0.15f);
 						break;

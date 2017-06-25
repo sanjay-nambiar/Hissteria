@@ -28,6 +28,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)TextRenderer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Transform2D.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VectorHelper.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VertexDeclarations.cpp" />
@@ -47,6 +48,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)OrthographicCamera.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)pch.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StepTimer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TextRenderer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Transform2D.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VectorHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)VertexDeclarations.h" />

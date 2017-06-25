@@ -56,6 +56,9 @@ namespace DirectXGame
 		DirectX::XMFLOAT4 mHeadColor;
 		DirectX::XMFLOAT4 mBodyColor;
 
+		std::string mName;
+		std::uint32_t mScore;
+
 		std::shared_ptr<SpriteManager> mSpriteManager;
 
 		static const std::uint32_t MaxBodyBlocks;
