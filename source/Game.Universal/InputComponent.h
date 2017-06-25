@@ -57,7 +57,7 @@ namespace DirectXGame
 
 		void Update(const DX::StepTimer& gameTime) override;
 		bool IsCommandGiven(std::uint32_t playerId, Command command);
-
+		void SetVibration(float left, float right);
 	private:
 
 		enum class KeyCheckType

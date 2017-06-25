@@ -11,7 +11,8 @@ namespace DirectXGame
 	SnakeManager::SnakeManager(const std::shared_ptr<SpriteManager>& spriteManager, const std::shared_ptr<SpawnManager>& spawnManager,
 		const std::shared_ptr<InputComponent>& gameCommands) :
 		GameComponent(nullptr),
-		mSpriteManager(spriteManager), mSpawnManager(spawnManager), mGameCommands(gameCommands)
+		mSpriteManager(spriteManager), mSpawnManager(spawnManager), mInputComponent(gameCommands),
+		mVibrationPeriod(0.0f), mElapsedVibrationTime(0.0f)
 	{
 		for (const auto& config : ProgramHelper::PlayerConfigs)
 		{
@@ -23,6 +24,12 @@ namespace DirectXGame
 
 	void SnakeManager::Update(const DX::StepTimer& timer)
 	{
+		mElapsedVibrationTime += static_cast<float>(timer.GetElapsedSeconds());
+		if (mElapsedVibrationTime >= mVibrationPeriod)
+		{
+			StopVibration();
+		}
+
 		std::vector<XMFLOAT2> headingOffsets;
 		for (uint32_t index = 0; index < mSnakes.size(); ++index)
 		{
@@ -36,17 +43,17 @@ namespace DirectXGame
 		bool IsDebugExpandActive = false;
 		if (ProgramHelper::IsDebugEnabled)
 		{
-			if (mGameCommands->IsCommandGiven(1, InputComponent::Command::DebugAddBodyBlock))
+			if (mInputComponent->IsCommandGiven(1, InputComponent::Command::DebugAddBodyBlock))
 			{
 				IsDebugAddBodyBlockActive = true;
 			}
 
-			if (mGameCommands->IsCommandGiven(1, InputComponent::Command::DebugShrink))
+			if (mInputComponent->IsCommandGiven(1, InputComponent::Command::DebugShrink))
 			{
 				IsDebugShrinkActive = true;
 			}
 
-			if (mGameCommands->IsCommandGiven(1, InputComponent::Command::DebugExpand))
+			if (mInputComponent->IsCommandGiven(1, InputComponent::Command::DebugExpand))
 			{
 				IsDebugExpandActive = true;
 			}
@@ -83,19 +90,19 @@ namespace DirectXGame
 
 	void SnakeManager::GetPlayerHeading(std::uint32_t playerId, DirectX::XMFLOAT2& headingOffset)
 	{
-		if (mGameCommands->IsCommandGiven(playerId, InputComponent::Command::MoveUp))
+		if (mInputComponent->IsCommandGiven(playerId, InputComponent::Command::MoveUp))
 		{
 			headingOffset.y = 1.0f;
 		}
-		else if (mGameCommands->IsCommandGiven(playerId, InputComponent::Command::MoveDown))
+		else if (mInputComponent->IsCommandGiven(playerId, InputComponent::Command::MoveDown))
 		{
 			headingOffset.y = -1.0f;
 		}
-		else if (mGameCommands->IsCommandGiven(playerId, InputComponent::Command::MoveRight))
+		else if (mInputComponent->IsCommandGiven(playerId, InputComponent::Command::MoveRight))
 		{
 			headingOffset.x = 1.0f;
 		}
-		else if (mGameCommands->IsCommandGiven(playerId, InputComponent::Command::MoveLeft))
+		else if (mInputComponent->IsCommandGiven(playerId, InputComponent::Command::MoveLeft))
 		{
 			headingOffset.x = -1.0f;
 		}
@@ -124,6 +131,7 @@ namespace DirectXGame
 					case Spawn::SpawnType::Grow:
 						snake->AddBlocks(1, ColorHelper::Yellow());
 						headSprite->SetColorInterpolation(ColorHelper::Yellow(), 0.2f, 0.2f, 3);
+						VibrateController(0.2f, 0.15f, 0.15f);
 						break;
 					}
 				}
@@ -152,7 +160,22 @@ namespace DirectXGame
 
 		if (snakesToKill.size() > 0)
 		{
+			VibrateController(0.5f, 1.0f, 1.0f);
 			return;
 		}
+	}
+
+	void SnakeManager::VibrateController(float timePeriod, float left, float right)
+	{
+		mVibrationPeriod = timePeriod;
+		mElapsedVibrationTime = 0.0f;
+		mInputComponent->SetVibration(left, right);
+	}
+
+	void SnakeManager::StopVibration()
+	{
+		mVibrationPeriod = 0.0f;
+		mElapsedVibrationTime = 0.0f;
+		mInputComponent->SetVibration(0.0f, 0.0f);
 	}
 }

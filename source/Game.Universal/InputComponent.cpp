@@ -23,10 +23,10 @@ namespace DirectXGame
 		{ KeyOf(1, Command::MoveRight), { KeyCheckType::WasPressedThisFrame, Keys::Right, GamePadButtons::None, MouseButtons::None } },
 
 		// Player 2 inputs
-		{ KeyOf(2, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::W, GamePadButtons::None, MouseButtons::None } },
-		{ KeyOf(2, Command::MoveLeft),{ KeyCheckType::WasPressedThisFrame, Keys::A, GamePadButtons::None, MouseButtons::None } },
-		{ KeyOf(2, Command::MoveDown),{ KeyCheckType::WasPressedThisFrame, Keys::S, GamePadButtons::None, MouseButtons::None } },
-		{ KeyOf(2, Command::MoveRight),{ KeyCheckType::WasPressedThisFrame, Keys::D, GamePadButtons::None, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::W, GamePadButtons::DPadUp, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveLeft),{ KeyCheckType::WasPressedThisFrame, Keys::A, GamePadButtons::DPadLeft, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveDown),{ KeyCheckType::WasPressedThisFrame, Keys::S, GamePadButtons::DPadDown, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveRight),{ KeyCheckType::WasPressedThisFrame, Keys::D, GamePadButtons::DPadRight, MouseButtons::None } },
 
 		// Debug inputs
 		{ KeyOf(0, Command::MasterDebugToggle), { KeyCheckType::WasPressedThisFrame, Keys::OemTilde, GamePadButtons::None, MouseButtons::None } },
@@ -111,5 +111,10 @@ namespace DirectXGame
 			result |= MouseCheckMethods.at(info.mType)(mMouse, info.mMouseButton);
 		}
 		return result;
+	}
+
+	void InputComponent::SetVibration(float left, float right)
+	{
+		mGamePad->GamePad()->SetVibration(0, left, right);
 	}
 }

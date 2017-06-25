@@ -24,11 +24,16 @@ namespace DirectXGame
 		void GetPlayerHeading(std::uint32_t playerId, DirectX::XMFLOAT2 &headingOffset);
 		void CheckSpawnCollision();
 		void SnakeToSnakeCollision();
+		void VibrateController(float timePeriod, float left, float right);
+		void StopVibration();
 
 		std::vector<std::shared_ptr<Snake>> mSnakes;
 		std::shared_ptr<SpriteManager> mSpriteManager;
 		std::shared_ptr<SpawnManager> mSpawnManager;
 
-		std::shared_ptr<InputComponent> mGameCommands;
+		float mVibrationPeriod;
+		float mElapsedVibrationTime;
+
+		std::shared_ptr<InputComponent> mInputComponent;
 	};
 }
