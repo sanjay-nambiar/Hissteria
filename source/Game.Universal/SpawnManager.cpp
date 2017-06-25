@@ -48,21 +48,38 @@ namespace DirectXGame
 			shared_ptr<Sprite> sprite = spawn->mSprite.lock();
 			auto transform = sprite->Transform();
 			transform.SetRotation(transform.Rotation() + 0.05f);
+			sprite->SetTransform(transform);
 			
 			if (updatePosition)
 			{
-				XMFLOAT2 position(mRandomRealDistribution(mRandomGenerator), mRandomRealDistribution(mRandomGenerator));
-				transform.SetPosition(position);
-				sprite->SetColor(XMFLOAT4((mRandomIntDistribution(mRandomGenerator) + 1) / 3.0f,
-					(mRandomIntDistribution(mRandomGenerator) + 1) / 3.0f,
-					(mRandomIntDistribution(mRandomGenerator) + 1) / 3.0f,
-					1.0f));
+				MoveSpawn(spawn);
 			}
-			sprite->SetTransform(transform);
 		}
 
 		if (updatePosition)
 		{
+			mSecondsSinceLastSpawn = 0;
+		}
+	}
+
+	void SpawnManager::MoveSpawn(const shared_ptr<Spawn>& spawn)
+	{
+		shared_ptr<Sprite> sprite = spawn->mSprite.lock();
+		auto transform = sprite->Transform();
+		XMFLOAT2 position(mRandomRealDistribution(mRandomGenerator), mRandomRealDistribution(mRandomGenerator));
+		transform.SetPosition(position);
+		sprite->SetTransform(transform);
+		sprite->SetColor(XMFLOAT4((mRandomIntDistribution(mRandomGenerator) + 1) / 3.0f,
+			(mRandomIntDistribution(mRandomGenerator) + 1) / 3.0f,
+			(mRandomIntDistribution(mRandomGenerator) + 1) / 3.0f,
+			1.0f));
+	}
+
+	void SpawnManager::KillSpawns(const std::vector<std::shared_ptr<Spawn>>& spawns)
+	{
+		for (const auto& spawn : spawns)
+		{
+			MoveSpawn(spawn);
 			mSecondsSinceLastSpawn = 0;
 		}
 	}

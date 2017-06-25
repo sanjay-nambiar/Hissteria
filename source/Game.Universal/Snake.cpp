@@ -14,8 +14,8 @@ namespace DirectXGame
 	const XMFLOAT2 Snake::ZeroAngleVector = { 1.0f, 0.0f };
 	
 	const std::unordered_map<Snake::SnakeType, Snake::SnakeTypeConfig> Snake::SnakeTypeConfigMapping = {
-		{ SnakeType::Circular, { XMINT2(0, 0), 50.0f } },
-		{ SnakeType::ChainLink, { XMINT2(1, 0), 30.0f } }
+		{ SnakeType::Circular, { XMINT2(0, 0), 3.0f } },
+		{ SnakeType::ChainLink, { XMINT2(1, 0), 3.0f } }
 	};
 
 
@@ -114,6 +114,11 @@ namespace DirectXGame
 	Snake::SnakeType Snake::Type() const
 	{
 		return mType;
+	}
+
+	float Snake::ColliderRadius() const
+	{
+		return mColliderRadius;
 	}
 
 	const DirectX::XMFLOAT2& Snake::HeadingDirection()

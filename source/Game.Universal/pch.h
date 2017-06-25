@@ -25,6 +25,7 @@
 #include <string>
 #include <cstdint>
 #include <vector>
+#include <algorithm>
 
 // Library
 #include "ColorHelper.h"

@@ -25,6 +25,7 @@ namespace DirectXGame
 
 		const DirectX::XMFLOAT2& HeadingDirection();
 		SnakeType Type() const;
+		float ColliderRadius() const;
 
 		void Update(const DX::StepTimer& timer);
 	private:

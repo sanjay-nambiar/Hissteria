@@ -20,6 +20,8 @@ namespace DirectXGame
 		Spawn(SpawnType type, std::weak_ptr<SpriteManager> spriteManager);
 
 		SpawnType Type() const;
+		float ColliderRadius() const;
+		const DirectX::XMFLOAT2& Position() const;
 	private:
 		struct SpawnTypeConfig
 		{

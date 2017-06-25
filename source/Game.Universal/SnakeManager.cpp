@@ -48,11 +48,31 @@ namespace DirectXGame
 				snake->SetHeadingDirection(headingOffset);
 			}
 			snake->Update(timer);
+		}
 
-			/*for (const auto& spawn : mSpawns)
+		std::vector<std::shared_ptr<Spawn>> spawnsToKill;
+		for (auto& snake : mSnakes)
+		{
+			const auto& head = snake->mBody.front();
+			const auto& snakePosition = head.mSprite.lock()->Transform().Position();
+
+			for (const auto& spawn : mSpawnManager->Spawns())
 			{
-				spawn->
-			}*/
+				float lengthSq = XMVectorGetX(XMVector2LengthSq(XMLoadFloat2(&snakePosition) - XMLoadFloat2(&spawn->Position())));
+				float distanceSq = (snake->ColliderRadius() + spawn->ColliderRadius());
+				distanceSq *= distanceSq;
+
+				if (distanceSq >= lengthSq)
+				{
+					spawnsToKill.push_back(spawn);
+					snake->AddBlock();
+				}
+			}
+		}
+
+		if (spawnsToKill.size() > 0)
+		{
+			mSpawnManager->KillSpawns(spawnsToKill);
 		}
 	}
 }
