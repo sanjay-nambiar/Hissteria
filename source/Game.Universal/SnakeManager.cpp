@@ -46,7 +46,12 @@ namespace DirectXGame
 			wasAPressed = true;
 		}
 
-		//const auto& mSpawns = mSpawnManager->Spawns();
+		bool wasPressedMinus = false;
+		if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::OemMinus))
+		{
+			wasPressedMinus = true;
+		}
+
 		for (auto& snake : mSnakes)
 		{
 			if ((headingOffset.x + headingOffset.y) != 0.0f)
@@ -54,9 +59,15 @@ namespace DirectXGame
 				snake->SetHeadingDirection(headingOffset);
 			}
 			snake->Update(timer);
+			
 			if (wasAPressed)
 			{
 				snake->AddBlock();
+			}
+
+			if (wasPressedMinus)
+			{
+				snake->ShrinkSnake(3);
 			}
 		}
 

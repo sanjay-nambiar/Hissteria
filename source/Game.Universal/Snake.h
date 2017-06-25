@@ -21,7 +21,6 @@ namespace DirectXGame
 		Snake(SnakeType type, std::uint32_t bodyBlocks, DirectX::XMFLOAT2 blockDimension, DirectX::XMFLOAT2 heading, const std::shared_ptr<SpriteManager>& spriteManager);
 
 		void SetHeadingDirection(DirectX::XMFLOAT2 headingDirection);
-		void AddBlock();
 
 		const DirectX::XMFLOAT2& HeadingDirection();
 		SnakeType Type() const;
@@ -39,6 +38,9 @@ namespace DirectXGame
 			const DirectX::XMINT2 mSpriteIndex;
 			const float mColliderRadius;
 		};
+
+		void AddBlock();
+		void ShrinkSnake(std::uint32_t newBlockCount);
 
 		SnakeType mType;
 		std::vector<BodyBlock> mBody;

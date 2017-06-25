@@ -6,13 +6,13 @@ using namespace DX;
 
 namespace DirectXGame
 {
-	const std::uint32_t Snake::MaxBodyBlocks = 20;
+	const std::uint32_t Snake::MaxBodyBlocks = 10;
 	const float Snake::MaxSpeed = 50.0f;
 	const float Snake::MaxForce = 5.0f;
 
 	const XMFLOAT2 Snake::BlockScale = { 3.0f, 3.0f };
 	const XMFLOAT2 Snake::ZeroAngleVector = { 1.0f, 0.0f };
-	
+
 	const std::unordered_map<Snake::SnakeType, Snake::SnakeTypeConfig> Snake::SnakeTypeConfigMapping = {
 		{ SnakeType::Circular, { XMINT2(0, 0), 3.0f } },
 		{ SnakeType::ChainLink, { XMINT2(1, 0), 3.0f } }
@@ -29,7 +29,7 @@ namespace DirectXGame
 
 		XMFLOAT2 positionFloat = { 0.0f, 0.0f };
 		XMVECTOR centerOffset = { 0.5f, 0.5f };
-		
+
 		// calculate block offset and offset position to sprite's center
 		XMVECTOR blockDimensionVector = XMLoadFloat2(&blockDimension);
 		XMVECTOR headingVector = XMVector2Normalize(XMLoadFloat2(&mHeadingDirection));
@@ -69,6 +69,11 @@ namespace DirectXGame
 
 	void Snake::AddBlock()
 	{
+		if (mBody.size() >= MaxBodyBlocks)
+		{
+			return;
+		}
+
 		BodyBlock block;
 		block.mSprite = mSpriteManager->CreateSprite(SnakeTypeConfigMapping.at(mType).mSpriteIndex);
 		auto sprite = block.mSprite.lock();
@@ -93,6 +98,18 @@ namespace DirectXGame
 		sprite->SetTransform(transform);
 
 		mBody.emplace_back(block);
+	}
+
+	void Snake::ShrinkSnake(std::uint32_t newBlockCount)
+	{
+		if (newBlockCount > 0 && newBlockCount <= mBody.size())
+		{
+			for (auto index = mBody.size() - 1; index >= newBlockCount; --index)
+			{
+				mSpriteManager->RemoveSprite(mBody[index].mSprite);
+			}
+			mBody.erase(mBody.begin() + newBlockCount, mBody.end());
+		}
 	}
 
 	void Snake::SetHeadingDirection(DirectX::XMFLOAT2 headingDirection)
