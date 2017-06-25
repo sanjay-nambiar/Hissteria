@@ -21,7 +21,7 @@ namespace DirectXGame
 		mSpawns.reserve(mMaxSpawns);
 		for (std::uint32_t index = 0; index < maxSpawns; ++index)
 		{
-			auto spawn = make_shared<Spawn>(Spawn::SpawnType::Food, spriteManager);
+			auto spawn = make_shared<Spawn>(Spawn::SpawnType::Grow, spriteManager);
 			auto sprite = spawn->mSprite.lock();
 			auto transform = Transform2D(Vector2Helper::Zero, 0.0f, SpawnScale);
 			sprite->SetTransform(transform);

@@ -247,6 +247,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="BallManager.h" />
+    <ClInclude Include="InputComponent.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="FieldManager.h" />
     <ClInclude Include="ProgramHelper.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="BallManager.cpp" />
+    <ClCompile Include="InputComponent.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="FieldManager.cpp" />
     <ClCompile Include="ProgramHelper.cpp" />

@@ -14,7 +14,10 @@ namespace DirectXGame
 	public:
 		enum class SpawnType
 		{
-			Food
+			Grow,
+			Reset,
+			SpeedBoost,
+			SlowDown,
 		};
 
 		Spawn(SpawnType type, std::weak_ptr<SpriteManager> spriteManager);

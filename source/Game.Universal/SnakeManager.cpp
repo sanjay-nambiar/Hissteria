@@ -9,10 +9,9 @@ using namespace DirectX;
 namespace DirectXGame
 {
 	SnakeManager::SnakeManager(const std::shared_ptr<SpriteManager>& spriteManager, const std::shared_ptr<SpawnManager>& spawnManager,
-		const std::shared_ptr<KeyboardComponent>& keyboardComponent, const std::shared_ptr<GamePadComponent>& gamePadComponent) :
+		const std::shared_ptr<InputComponent>& gameCommands) :
 		GameComponent(nullptr),
-		mSpriteManager(spriteManager), mSpawnManager(spawnManager),
-		mKeyboardComponent(keyboardComponent), mGamePadComponent(gamePadComponent)
+		mSpriteManager(spriteManager), mSpawnManager(spawnManager), mGameCommands(gameCommands)
 	{
 		XMFLOAT2 dimension = { 6.0f, 3.0f };
 		XMFLOAT2 heading = { 1.0f, 0.0f };
@@ -22,65 +21,55 @@ namespace DirectXGame
 
 	void SnakeManager::Update(const DX::StepTimer& timer)
 	{
-		XMFLOAT2 headingOffset = { 0.0f, 0.0f };
-		if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::Up))
+		std::vector<XMFLOAT2> headingOffsets;
+		for (uint32_t index = 0; index < mSnakes.size(); ++index)
 		{
-			headingOffset.y = 1.0f;
-		}
-		else if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::Down))
-		{
-			headingOffset.y = -1.0f;
-		}
-		else if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::Right))
-		{
-			headingOffset.x = 1.0f;
-		}
-		else if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::Left))
-		{
-			headingOffset.x = -1.0f;
+			headingOffsets.push_back({ 0.0f, 0.0f });
+			GetPlayerHeading((index + 1), headingOffsets[index]);
 		}
 		
 		// Debug keys
-		bool wasPressedA = false;
-		bool wasPressedMinus = false;
-		bool wasPressedPlus = false;
+		bool IsDebugAddBodyBlockActive = false;
+		bool IsDebugShrinkActive = false;
+		bool IsDebugExpandActive = false;
 		if (ProgramHelper::IsDebugEnabled)
 		{
-			if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::A))
+			if (mGameCommands->IsCommandGiven(1, InputComponent::Command::DebugAddBodyBlock))
 			{
-				wasPressedA = true;
+				IsDebugAddBodyBlockActive = true;
 			}
 
-			if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::OemMinus))
+			if (mGameCommands->IsCommandGiven(1, InputComponent::Command::DebugShrink))
 			{
-				wasPressedMinus = true;
+				IsDebugShrinkActive = true;
 			}
 
-			if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::OemPlus))
+			if (mGameCommands->IsCommandGiven(1, InputComponent::Command::DebugExpand))
 			{
-				wasPressedPlus = true;
+				IsDebugExpandActive = true;
 			}
 		}
 
-		for (auto& snake : mSnakes)
+		for (uint32_t index = 0; index < mSnakes.size(); ++index)
 		{
-			if ((headingOffset.x + headingOffset.y) != 0.0f)
+			auto& snake = mSnakes[index];
+			if ((headingOffsets[index].x + headingOffsets[index].y) != 0.0f)
 			{
-				snake->SetHeadingDirection(headingOffset);
+				snake->SetHeadingDirection(headingOffsets[index]);
 			}
 			snake->Update(timer);
 			
-			if (wasPressedA)
+			if (IsDebugAddBodyBlockActive)
 			{
 				snake->AddBlocks(1, ColorHelper::Yellow);
 			}
 
-			if (wasPressedMinus)
+			if (IsDebugShrinkActive)
 			{
 				snake->ShrinkSnake(3, ColorHelper::White);
 			}
 
-			if (wasPressedPlus)
+			if (IsDebugExpandActive)
 			{
 				snake->AddBlocks(1000, ColorHelper::Purple);
 			}
@@ -88,6 +77,26 @@ namespace DirectXGame
 
 		CheckSpawnCollision();
 		SnakeToSnakeCollision();
+	}
+
+	void SnakeManager::GetPlayerHeading(std::uint32_t playerId, DirectX::XMFLOAT2& headingOffset)
+	{
+		if (mGameCommands->IsCommandGiven(playerId, InputComponent::Command::MoveUp))
+		{
+			headingOffset.y = 1.0f;
+		}
+		else if (mGameCommands->IsCommandGiven(playerId, InputComponent::Command::MoveDown))
+		{
+			headingOffset.y = -1.0f;
+		}
+		else if (mGameCommands->IsCommandGiven(playerId, InputComponent::Command::MoveRight))
+		{
+			headingOffset.x = 1.0f;
+		}
+		else if (mGameCommands->IsCommandGiven(playerId, InputComponent::Command::MoveLeft))
+		{
+			headingOffset.x = -1.0f;
+		}
 	}
 
 	void SnakeManager::CheckSpawnCollision()
@@ -110,7 +119,7 @@ namespace DirectXGame
 
 					switch (spawn->Type())
 					{
-					case Spawn::SpawnType::Food:
+					case Spawn::SpawnType::Grow:
 						snake->AddBlocks(1, ColorHelper::Yellow);
 						headSprite->SetColorInterpolation(ColorHelper::Yellow, 0.2f, 0.2f, 3);
 						break;

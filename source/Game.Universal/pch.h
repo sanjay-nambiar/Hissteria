@@ -54,6 +54,7 @@
 #include "SpriteDemoManager.h"
 
 // Game
+#include "InputComponent.h"
 #include "Sprite.h"
 #include "SpriteManager.h"
 #include "Spawn.h"

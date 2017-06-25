@@ -7,7 +7,7 @@ using namespace DirectX;
 namespace DirectXGame
 {
 	const std::unordered_map<Spawn::SpawnType, Spawn::SpawnTypeConfig> Spawn::SpawnTypeConfigMapping = {
-		{SpawnType::Food, { XMINT2(2, 0), 3.0f }}
+		{SpawnType::Grow, { XMINT2(2, 0), 3.0f }}
 	};
 
 	Spawn::Spawn(SpawnType type, std::weak_ptr<SpriteManager> spriteManager)

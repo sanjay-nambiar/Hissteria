@@ -23,17 +23,9 @@ namespace DirectXGame
 		mComponents.push_back(camera);
 		camera->SetPosition(0, 0, 1);
 
-		// Input components. These are not pushed to components list since they are updated manually
-		// so that debug inputs can be enabled
+		// Input component is not pushed to components list since it is updated manually so that debug inputs can be detected during pause game
 		CoreWindow^ window = CoreWindow::GetForCurrentThread();
-		mKeyboard = make_shared<KeyboardComponent>(mDeviceResources);		
-		mKeyboard->Keyboard()->SetWindow(window);
-
-		mMouse = make_shared<MouseComponent>(mDeviceResources);		
-		mMouse->Mouse()->SetWindow(window);
-		mComponents.push_back(mMouse);
-
-		mGamePad = make_shared<GamePadComponent>(mDeviceResources);
+		mInputComponent = make_shared<InputComponent>(deviceResources, window);
 
 		auto fpsTextRenderer = make_shared<FpsTextRenderer>(mDeviceResources);
 		mComponents.push_back(fpsTextRenderer);
@@ -44,7 +36,7 @@ namespace DirectXGame
 		auto spawnManager = make_shared<SpawnManager>(1, spriteManager);
 		mComponents.push_back(spawnManager);
 
-		auto snakeManager = make_shared<SnakeManager>(spriteManager, spawnManager, mKeyboard, mGamePad);
+		auto snakeManager = make_shared<SnakeManager>(spriteManager, spawnManager, mInputComponent);
 		mComponents.push_back(snakeManager);
 
 		mTimer.SetFixedTimeStep(true);
@@ -73,9 +65,7 @@ namespace DirectXGame
 		// Update scene objects.
 		mTimer.Tick([&]()
 		{
-			mKeyboard->Update(mTimer);
-			mMouse->Update(mTimer);
-			mGamePad->Update(mTimer);
+			mInputComponent->Update(mTimer);
 
 			if (mGameState != GameState::DebugPause || (mGameState == GameState::DebugPause && mDebugStep))
 			{
@@ -86,16 +76,14 @@ namespace DirectXGame
 				mDebugStep = false;
 			}
 
-			if (mKeyboard->WasKeyPressedThisFrame(Keys::Escape) ||
-				mMouse->WasButtonPressedThisFrame(MouseButtons::Middle) ||
-				mGamePad->WasButtonPressedThisFrame(GamePadButtons::Back))
+			if (mInputComponent->IsCommandGiven(0, InputComponent::Command::GameExit))
 			{
 				CoreApplication::Exit();
 			}
 
 
 			// Turn on master debug
-			if (mKeyboard->WasKeyPressedThisFrame(Keys::OemTilde))
+			if (mInputComponent->IsCommandGiven(0, InputComponent::Command::MasterDebugToggle))
 			{
 				ProgramHelper::IsDebugEnabled = !ProgramHelper::IsDebugEnabled;
 			}
@@ -103,7 +91,7 @@ namespace DirectXGame
 			// Debug keys
 			if (ProgramHelper::IsDebugEnabled)
 			{
-				if (mKeyboard->WasKeyPressedThisFrame(Keys::Space))
+				if (mInputComponent->IsCommandGiven(0, InputComponent::Command::DebugPause))
 				{
 					if (mGameState != GameState::DebugPause)
 					{
@@ -119,7 +107,7 @@ namespace DirectXGame
 				}
 			}
 
-			if (mKeyboard->WasKeyPressedThisFrame(Keys::F10))
+			if (mInputComponent->IsCommandGiven(0, InputComponent::Command::DebugStepForward))
 			{
 				mDebugStep = true;
 			}

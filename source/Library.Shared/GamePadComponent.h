@@ -20,7 +20,8 @@ namespace DX
 		DPadUp,
 		DPadDown,
 		DPadLeft,
-		DPadRight
+		DPadRight,
+		None
 	};
 
 	class GamePadComponent final : public GameComponent
