@@ -29,6 +29,14 @@ namespace DirectXGame
 		virtual void OnDeviceRestored();
 
 	private:
+		enum class GameState
+		{
+			Menu,
+			InGame,
+			Pause,
+			DebugPause
+		};
+
 		void IntializeResources();
 
 		std::shared_ptr<DX::DeviceResources> mDeviceResources;
@@ -37,5 +45,9 @@ namespace DirectXGame
 		std::shared_ptr<DX::KeyboardComponent> mKeyboard;
 		std::shared_ptr<DX::MouseComponent> mMouse;
 		std::shared_ptr<DX::GamePadComponent> mGamePad;
+
+		GameState mGameState;
+		GameState mPreviousGameState;
+		bool mDebugStep;
 	};
 }

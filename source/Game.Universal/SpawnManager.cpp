@@ -9,7 +9,7 @@ using namespace DirectX;
 
 namespace DirectXGame
 {
-	const float SpawnManager::SpawnLifeTimeSeconds = 2.5f;
+	const float SpawnManager::SpawnLifeTimeSeconds = 50.0f;
 	const XMFLOAT2 SpawnManager::SpawnScale = XMFLOAT2(3.0f, 3.0f);
 
 	SpawnManager::SpawnManager(std::uint32_t maxSpawns, std::shared_ptr<SpriteManager> spriteManager) :

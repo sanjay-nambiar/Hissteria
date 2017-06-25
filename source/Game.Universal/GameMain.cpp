@@ -14,7 +14,7 @@ namespace DirectXGame
 {
 	// Loads and initializes application assets when the application is loaded.
 	GameMain::GameMain(const shared_ptr<DX::DeviceResources>& deviceResources) :
-		mDeviceResources(deviceResources)
+		mDeviceResources(deviceResources), mGameState(GameState::InGame), mPreviousGameState(GameState::Menu), mDebugStep(false)
 	{
 		// Register to be notified if the Device is lost or recreated
 		mDeviceResources->RegisterDeviceNotify(this);
@@ -23,17 +23,17 @@ namespace DirectXGame
 		mComponents.push_back(camera);
 		camera->SetPosition(0, 0, 1);
 
+		// Input components. These are not pushed to components list since they are updated manually
+		// so that debug inputs can be enabled
 		CoreWindow^ window = CoreWindow::GetForCurrentThread();
 		mKeyboard = make_shared<KeyboardComponent>(mDeviceResources);		
 		mKeyboard->Keyboard()->SetWindow(window);
-		mComponents.push_back(mKeyboard);
 
 		mMouse = make_shared<MouseComponent>(mDeviceResources);		
 		mMouse->Mouse()->SetWindow(window);
 		mComponents.push_back(mMouse);
 
 		mGamePad = make_shared<GamePadComponent>(mDeviceResources);
-		mComponents.push_back(mGamePad);
 
 		auto fpsTextRenderer = make_shared<FpsTextRenderer>(mDeviceResources);
 		mComponents.push_back(fpsTextRenderer);
@@ -73,9 +73,17 @@ namespace DirectXGame
 		// Update scene objects.
 		mTimer.Tick([&]()
 		{
-			for (auto& component : mComponents)
+			mKeyboard->Update(mTimer);
+			mMouse->Update(mTimer);
+			mGamePad->Update(mTimer);
+
+			if (mGameState != GameState::DebugPause || (mGameState == GameState::DebugPause && mDebugStep))
 			{
-				component->Update(mTimer);
+				for (auto& component : mComponents)
+				{
+					component->Update(mTimer);
+				}
+				mDebugStep = false;
 			}
 
 			if (mKeyboard->WasKeyPressedThisFrame(Keys::Escape) ||
@@ -83,6 +91,26 @@ namespace DirectXGame
 				mGamePad->WasButtonPressedThisFrame(GamePadButtons::Back))
 			{
 				CoreApplication::Exit();
+			}
+
+			if (mKeyboard->WasKeyPressedThisFrame(Keys::OemTilde))
+			{
+				if (mGameState != GameState::DebugPause)
+				{
+					mPreviousGameState = mGameState;
+					mGameState = GameState::DebugPause;
+				}
+				else
+				{
+					GameState temp = mGameState;
+					mGameState = mPreviousGameState;
+					mPreviousGameState = temp;
+				}
+			}
+
+			if (mKeyboard->WasKeyPressedThisFrame(Keys::F10))
+			{
+				mDebugStep = true;
 			}
 		});
 	}

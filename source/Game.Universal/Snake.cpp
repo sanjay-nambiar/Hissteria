@@ -75,17 +75,16 @@ namespace DirectXGame
 		sprite->SetColor(ColorHelper::Green);
 
 		auto transform = Transform2D();
-		XMVECTOR position = XMLoadFloat2(&mBody.back().mSprite.lock()->Transform().Position());
-		XMVECTOR headingVector = XMLoadFloat2(&mHeadingDirection);
+		const auto& leadingSprite = mBody.back().mSprite.lock();
+		XMVECTOR position = XMLoadFloat2(&leadingSprite->Transform().Position());
+
+		float rotation = leadingSprite->Transform().Rotation();
+		transform.SetRotation(rotation);
+		XMMATRIX rotationTransform = XMMatrixAffineTransformation2D(XMLoadFloat2(&Vector2Helper::One), XMLoadFloat2(&Vector2Helper::Zero),
+			rotation, XMLoadFloat2(&Vector2Helper::Zero));
+		XMVECTOR headingVector = XMVector2Transform(XMLoadFloat2(&ZeroAngleVector), rotationTransform);
 		XMVECTOR blockOffset = -(headingVector * XMLoadFloat2(&mDimension));
 		position += blockOffset;
-
-		float rotation = XMVectorGetX(XMVector2AngleBetweenNormals(XMLoadFloat2(&ZeroAngleVector), XMLoadFloat2(&mHeadingDirection)));
-		if (mHeadingDirection.y < 0)
-		{
-			rotation = -rotation;
-		}
-		transform.SetRotation(rotation);
 
 		XMFLOAT2 positionFloat;
 		XMStoreFloat2(&positionFloat, position);

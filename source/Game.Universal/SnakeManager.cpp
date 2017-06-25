@@ -39,6 +39,12 @@ namespace DirectXGame
 		{
 			headingOffset.x = -1.0f;
 		}
+		
+		bool wasAPressed = false;
+		if (mKeyboardComponent->WasKeyPressedThisFrame(Keys::A))
+		{
+			wasAPressed = true;
+		}
 
 		//const auto& mSpawns = mSpawnManager->Spawns();
 		for (auto& snake : mSnakes)
@@ -48,6 +54,10 @@ namespace DirectXGame
 				snake->SetHeadingDirection(headingOffset);
 			}
 			snake->Update(timer);
+			if (wasAPressed)
+			{
+				snake->AddBlock();
+			}
 		}
 
 		CheckSpawnCollision();
