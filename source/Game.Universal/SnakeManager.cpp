@@ -10,32 +10,27 @@ namespace DirectXGame
 {
 	SnakeManager::SnakeManager(const std::vector<std::shared_ptr<DX::TextRenderer>>& textRenderers, const std::shared_ptr<SpriteManager>& spriteManager,
 		const std::shared_ptr<SpawnManager>& spawnManager, const std::shared_ptr<InputComponent>& gameCommands) :
-		GameComponent(nullptr), mScoreRenderers(textRenderers),
-		mSpriteManager(spriteManager), mSpawnManager(spawnManager), mInputComponent(gameCommands),
-		mVibrationPeriod(0.0f), mElapsedVibrationTime(0.0f)
+		GameComponent(nullptr),
+		mScoreRenderers(textRenderers), mSpriteManager(spriteManager), mSpawnManager(spawnManager), mInputComponent(gameCommands)
 	{
+		std::uint32_t index = 1;
 		for (const auto& config : ProgramHelper::PlayerConfigs)
 		{
-			auto snake = make_shared<Snake>(config.mType, config.mBlocks, config.mDimension, config.mPosition, config.mHeading,
+			auto snake = make_shared<Snake>(index, config.mType, config.mBlocks, config.mDimension, config.mPosition, config.mHeading,
 				config.mHeadColor, config.mBodyColor, mSpriteManager);
 			snake->mName = config.mName;
 			mSnakes.push_back(snake);
+			++index;
 		}
 	}
 
 	void SnakeManager::Update(const DX::StepTimer& timer)
 	{
-		mElapsedVibrationTime += static_cast<float>(timer.GetElapsedSeconds());
-		if (mElapsedVibrationTime >= mVibrationPeriod)
-		{
-			StopVibration();
-		}
-
 		std::vector<XMFLOAT2> headingOffsets;
-		for (uint32_t index = 0; index < mSnakes.size(); ++index)
+		for (auto& snake : mSnakes)
 		{
 			headingOffsets.push_back({ 0.0f, 0.0f });
-			GetPlayerHeading((index + 1), headingOffsets[index]);
+			GetPlayerHeading(snake->mId, headingOffsets[snake->mId - 1]);
 		}
 		
 		// Debug keys
@@ -60,12 +55,11 @@ namespace DirectXGame
 			}
 		}
 
-		for (uint32_t index = 0; index < mSnakes.size(); ++index)
+		for (auto& snake : mSnakes)
 		{
-			auto& snake = mSnakes[index];
-			if ((headingOffsets[index].x + headingOffsets[index].y) != 0.0f)
+			if ((headingOffsets[snake->mId - 1].x + headingOffsets[snake->mId - 1].y) != 0.0f)
 			{
-				snake->SetHeadingDirection(headingOffsets[index]);
+				snake->SetHeadingDirection(headingOffsets[snake->mId - 1]);
 			}
 			snake->Update(timer);
 			
@@ -88,11 +82,10 @@ namespace DirectXGame
 		CheckSpawnCollision();
 		SnakeToSnakeCollision();
 
-		for (std::uint32_t index = 0; index < mSnakes.size(); ++index)
+		for (auto& snake : mSnakes)
 		{
-			auto& snake = mSnakes[index];
 			std::wstring scoreText = ProgramHelper::ToWideString(snake->mName) + L" : " + std::to_wstring(snake->mScore) + L"\n";
-			mScoreRenderers[index]->SetText(scoreText, 500, 100);
+			mScoreRenderers[snake->mId - 1]->SetText(scoreText, 500, 100);
 		}
 	}
 
@@ -140,7 +133,7 @@ namespace DirectXGame
 						snake->AddBlocks(1, ColorHelper::Yellow());
 						snake->mScore += 5;
 						headSprite->SetColorInterpolation(ColorHelper::Yellow(), 0.2f, 0.2f, 3);
-						VibrateController(0.2f, 0.15f, 0.15f);
+						mInputComponent->VibrateController(snake->mId, 0.2f, 0.15f, 0.15f, 0.15f, 0.15f);
 						break;
 					}
 				}
@@ -163,28 +156,14 @@ namespace DirectXGame
 				if (mSnakes[collider]->CheckCollisionWithSnake(mSnakes[collidee]))
 				{
 					snakesToKill.push_back(mSnakes[collider]);
+					mInputComponent->VibrateController(mSnakes[collider]->mId, 0.5f, 1.0f, 1.0f);
 				}
 			}
 		}
 
 		if (snakesToKill.size() > 0)
 		{
-			VibrateController(0.5f, 1.0f, 1.0f);
 			return;
 		}
-	}
-
-	void SnakeManager::VibrateController(float timePeriod, float left, float right)
-	{
-		mVibrationPeriod = timePeriod;
-		mElapsedVibrationTime = 0.0f;
-		mInputComponent->SetVibration(left, right);
-	}
-
-	void SnakeManager::StopVibration()
-	{
-		mVibrationPeriod = 0.0f;
-		mElapsedVibrationTime = 0.0f;
-		mInputComponent->SetVibration(0.0f, 0.0f);
 	}
 }

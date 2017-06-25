@@ -50,6 +50,9 @@ namespace DX
 		bool WasButtonReleasedThisFrame(GamePadButtons button) const;
 		bool IsButtonHeldDown(GamePadButtons button) const;
 
+		void VibrateController(float timePeriod, float leftMotor, float rightMotor, float leftTrigger = 0.0f, float rightTrigger = 0.0f);
+		void StopVibration();
+
 	private:
 		static std::unique_ptr<DirectX::GamePad> sGamePad;
 
@@ -57,6 +60,8 @@ namespace DX
 
 		int mPlayer;
 		DirectX::GamePad::State mCurrentState;
-		DirectX::GamePad::State mLastState;		
+		DirectX::GamePad::State mLastState;
+		float mVibrationPeriod;
+		float mElapsedVibrationTime;
 	};
 }

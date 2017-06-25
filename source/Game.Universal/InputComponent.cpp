@@ -17,10 +17,10 @@ namespace DirectXGame
 		{ KeyOf(0, Command::GameExit),{ KeyCheckType::WasPressedThisFrame, Keys::Escape, GamePadButtons::Back, MouseButtons::Middle } },
 
 		// Player 1 inputs
-		{ KeyOf(1, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::Up, GamePadButtons::None, MouseButtons::None } },
-		{ KeyOf(1, Command::MoveLeft), { KeyCheckType::WasPressedThisFrame, Keys::Left, GamePadButtons::None, MouseButtons::None} },
-		{ KeyOf(1, Command::MoveDown),{ KeyCheckType::WasPressedThisFrame, Keys::Down, GamePadButtons::None, MouseButtons::None } },
-		{ KeyOf(1, Command::MoveRight), { KeyCheckType::WasPressedThisFrame, Keys::Right, GamePadButtons::None, MouseButtons::None } },
+		{ KeyOf(1, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::Up, GamePadButtons::DPadUp, MouseButtons::None } },
+		{ KeyOf(1, Command::MoveLeft), { KeyCheckType::WasPressedThisFrame, Keys::Left, GamePadButtons::DPadLeft, MouseButtons::None} },
+		{ KeyOf(1, Command::MoveDown),{ KeyCheckType::WasPressedThisFrame, Keys::Down, GamePadButtons::DPadDown, MouseButtons::None } },
+		{ KeyOf(1, Command::MoveRight), { KeyCheckType::WasPressedThisFrame, Keys::Right, GamePadButtons::DPadRight, MouseButtons::None } },
 
 		// Player 2 inputs
 		{ KeyOf(2, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::W, GamePadButtons::DPadUp, MouseButtons::None } },
@@ -72,17 +72,25 @@ namespace DirectXGame
 
 	InputComponent::InputComponent(const shared_ptr<DX::DeviceResources>& deviceResources, CoreWindow^ window) :
 		GameComponent(deviceResources),
-		mKeyboard(make_shared<KeyboardComponent>(mDeviceResources)), mGamePad(make_shared<GamePadComponent>(mDeviceResources)),
-		mMouse(make_shared<MouseComponent>(mDeviceResources))
+		mKeyboard(make_shared<KeyboardComponent>(mDeviceResources)), mMouse(make_shared<MouseComponent>(mDeviceResources))
 	{
 		mKeyboard->Keyboard()->SetWindow(window);
 		mMouse->Mouse()->SetWindow(window);
+
+		mGamePads.reserve(ProgramHelper::PlayerConfigs.size());
+		for (std::uint32_t index = 0; index < ProgramHelper::PlayerConfigs.size(); ++index)
+		{
+			mGamePads.push_back(make_shared<GamePadComponent>(mDeviceResources, index));
+		}
 	}
 
 	void InputComponent::Update(const DX::StepTimer& gameTime)
 	{
 		mKeyboard->Update(gameTime);
-		mGamePad->Update(gameTime);
+		for (auto& gamepad : mGamePads)
+		{
+			gamepad->Update(gameTime);
+		}
 		mMouse->Update(gameTime);
 	}
 
@@ -103,7 +111,17 @@ namespace DirectXGame
 
 		if (info.mPadButton != GamePadButtons::None)
 		{
-			result |= PadCheckMethods.at(info.mType)(mGamePad, info.mPadButton);
+			if (playerId == 0)
+			{
+				for (std::uint32_t index = 0; index < ProgramHelper::PlayerConfigs.size(); ++index)
+				{
+					result |= PadCheckMethods.at(info.mType)(mGamePads[index], info.mPadButton);
+				}
+			}
+			else
+			{
+				result |= PadCheckMethods.at(info.mType)(mGamePads[playerId - 1], info.mPadButton);
+			}
 		}
 
 		if (info.mMouseButton != MouseButtons::None)
@@ -113,8 +131,35 @@ namespace DirectXGame
 		return result;
 	}
 
-	void InputComponent::SetVibration(float left, float right)
+	void InputComponent::VibrateController(std::uint32_t playerId, float timePeriod, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger)
 	{
-		mGamePad->GamePad()->SetVibration(0, left, right);
+		assert(playerId >= 0 && playerId <= ProgramHelper::PlayerConfigs.size());
+		if (playerId > 0)
+		{
+			mGamePads[playerId - 1]->VibrateController(timePeriod, leftMotor, rightMotor, leftTrigger, rightTrigger);
+		}
+		else
+		{
+			for (auto& gamePad : mGamePads)
+			{
+				gamePad->VibrateController(timePeriod, leftMotor, rightMotor, leftTrigger, rightTrigger);
+			}
+		}
+	}
+
+	void InputComponent::StopControllerVibration(std::uint32_t playerId)
+	{
+		assert(playerId >= 0 && playerId <= ProgramHelper::PlayerConfigs.size());
+		if (playerId > 0)
+		{
+			mGamePads[playerId - 1]->StopVibration();
+		}
+		else
+		{
+			for (auto& gamePad : mGamePads)
+			{
+				gamePad->StopVibration();
+			}
+		}
 	}
 }

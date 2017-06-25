@@ -57,7 +57,9 @@ namespace DirectXGame
 
 		void Update(const DX::StepTimer& gameTime) override;
 		bool IsCommandGiven(std::uint32_t playerId, Command command);
-		void SetVibration(float left, float right);
+
+		void VibrateController(std::uint32_t playerId, float timePeriod, float leftMotor, float rightMotor, float leftTrigger = 0.0f, float rightTrigger = 0.0f);
+		void StopControllerVibration(std::uint32_t playerId);
 	private:
 
 		enum class KeyCheckType
@@ -80,7 +82,7 @@ namespace DirectXGame
 		};
 
 		std::shared_ptr<DX::KeyboardComponent> mKeyboard;
-		std::shared_ptr<DX::GamePadComponent> mGamePad;
+		std::vector<std::shared_ptr<DX::GamePadComponent>> mGamePads;
 		std::shared_ptr<DX::MouseComponent> mMouse;
 
 		static const std::unordered_map<std::uint32_t, CommandInfo> CommandMapping;
