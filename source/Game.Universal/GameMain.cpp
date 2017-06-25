@@ -27,8 +27,12 @@ namespace DirectXGame
 		CoreWindow^ window = CoreWindow::GetForCurrentThread();
 		mInputComponent = make_shared<InputComponent>(deviceResources, window);
 
-		auto fpsTextRenderer = make_shared<FpsTextRenderer>(mDeviceResources);
-		mComponents.push_back(fpsTextRenderer);
+		mFpsTextRenderer = make_shared<FpsTextRenderer>(mDeviceResources);
+		mFpsTextRenderer->SetVisible(ProgramHelper::IsDebugEnabled);
+		mComponents.push_back(mFpsTextRenderer);
+
+		mTextRenderer = make_shared<TextRenderer>(mDeviceResources);
+		mComponents.push_back(mTextRenderer);
 
 		auto spriteManager = make_shared<SpriteManager>(mDeviceResources, camera);
 		mComponents.push_back(spriteManager);
@@ -36,7 +40,7 @@ namespace DirectXGame
 		auto spawnManager = make_shared<SpawnManager>(1, spriteManager);
 		mComponents.push_back(spawnManager);
 
-		auto snakeManager = make_shared<SnakeManager>(spriteManager, spawnManager, mInputComponent);
+		auto snakeManager = make_shared<SnakeManager>(mTextRenderer, spriteManager, spawnManager, mInputComponent);
 		mComponents.push_back(snakeManager);
 
 		mTimer.SetFixedTimeStep(true);
@@ -86,6 +90,7 @@ namespace DirectXGame
 			if (mInputComponent->IsCommandGiven(0, InputComponent::Command::MasterDebugToggle))
 			{
 				ProgramHelper::IsDebugEnabled = !ProgramHelper::IsDebugEnabled;
+				mFpsTextRenderer->SetVisible(ProgramHelper::IsDebugEnabled);
 			}
 
 			// Debug keys

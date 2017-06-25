@@ -5,6 +5,10 @@
 #include <memory>
 #include <vector>
 
+namespace DX
+{
+	class TextRenderer;
+}
 
 namespace DirectXGame
 {
@@ -16,7 +20,8 @@ namespace DirectXGame
 	class SnakeManager final : public DX::GameComponent
 	{
 	public:
-		SnakeManager(const std::shared_ptr<SpriteManager>& spriteManager, const std::shared_ptr<SpawnManager>& spawnManager, const std::shared_ptr<InputComponent>& gameCommands);
+		SnakeManager(const std::shared_ptr<DX::TextRenderer>& textRenderer, const std::shared_ptr<SpriteManager>& spriteManager,
+			const std::shared_ptr<SpawnManager>& spawnManager, const std::shared_ptr<InputComponent>& gameCommands);
 		
 		void Update(const DX::StepTimer& timer) override;
 
@@ -33,6 +38,8 @@ namespace DirectXGame
 
 		float mVibrationPeriod;
 		float mElapsedVibrationTime;
+
+		std::shared_ptr<DX::TextRenderer> mScoreRenderer;
 
 		std::shared_ptr<InputComponent> mInputComponent;
 	};

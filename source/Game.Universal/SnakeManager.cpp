@@ -8,9 +8,9 @@ using namespace DirectX;
 
 namespace DirectXGame
 {
-	SnakeManager::SnakeManager(const std::shared_ptr<SpriteManager>& spriteManager, const std::shared_ptr<SpawnManager>& spawnManager,
-		const std::shared_ptr<InputComponent>& gameCommands) :
-		GameComponent(nullptr),
+	SnakeManager::SnakeManager(const std::shared_ptr<DX::TextRenderer>& textRenderer, const std::shared_ptr<SpriteManager>& spriteManager,
+		const std::shared_ptr<SpawnManager>& spawnManager, const std::shared_ptr<InputComponent>& gameCommands) :
+		GameComponent(nullptr), mScoreRenderer(textRenderer),
 		mSpriteManager(spriteManager), mSpawnManager(spawnManager), mInputComponent(gameCommands),
 		mVibrationPeriod(0.0f), mElapsedVibrationTime(0.0f)
 	{
@@ -87,6 +87,13 @@ namespace DirectXGame
 
 		CheckSpawnCollision();
 		SnakeToSnakeCollision();
+
+		std::wstring scoreText = L"";
+		for (const auto& snake : mSnakes)
+		{
+			scoreText += ProgramHelper::ToWideString(snake->mName) + L" : " + std::to_wstring(snake->mScore) + L"\n";
+		}
+		mScoreRenderer->SetText(scoreText, 500, 100);
 	}
 
 	void SnakeManager::GetPlayerHeading(std::uint32_t playerId, DirectX::XMFLOAT2& headingOffset)

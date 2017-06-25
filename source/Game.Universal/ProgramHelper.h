@@ -27,6 +27,10 @@ namespace DirectXGame
 		static const DirectX::XMFLOAT2 RandomLocationInsideBorder(const DirectX::XMFLOAT2& dimension);
 		static float RandomFloat(float min, float max);
 		static int32_t RandomInt(std::int32_t min, std::int32_t max);
+		static void ToWideString(const std::string& source, std::wstring& dest);
+		static std::wstring ToWideString(const std::string& source);
+		static void Totring(const std::wstring& source, std::string& dest);
+		static std::string ToString(const std::wstring& source);
 
 		static const float Left;
 		static const float Right;

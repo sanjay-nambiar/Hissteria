@@ -12,6 +12,7 @@ namespace DX
 	class KeyboardComponent;
 	class GamePadComponent;
 	class GameCommands;
+	class FpsTextRenderer;
 }
 
 // Renders Direct2D and 3D content on the screen.
@@ -44,6 +45,8 @@ namespace DirectXGame
 		std::vector<std::shared_ptr<DX::GameComponent>> mComponents;
 		DX::StepTimer mTimer;
 		std::shared_ptr<InputComponent> mInputComponent;
+		std::shared_ptr<DX::FpsTextRenderer> mFpsTextRenderer;
+		std::shared_ptr<DX::TextRenderer> mTextRenderer;
 
 		GameState mGameState;
 		GameState mPreviousGameState;

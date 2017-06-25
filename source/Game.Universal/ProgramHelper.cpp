@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "ProgramHelper.h"
+#include <string>
+#include <locale>
+#include <codecvt>
 
 using namespace DirectX;
 using namespace DX;
@@ -64,5 +67,25 @@ namespace DirectXGame
 	int32_t ProgramHelper::RandomInt(std::int32_t min, std::int32_t max)
 	{
 		return (RandomIntDistribution(RandomGenerator) % (max - min)) + min;
+	}
+
+	void ProgramHelper::ToWideString(const std::string& source, std::wstring& dest)
+	{
+		dest = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(source);
+	}
+
+	std::wstring ProgramHelper::ToWideString(const std::string& source)
+	{
+		return std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(source);
+	}
+
+	void ProgramHelper::Totring(const std::wstring& source, std::string& dest)
+	{
+		dest = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(source);
+	}
+
+	std::string ProgramHelper::ToString(const std::wstring& source)
+	{
+		return std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(source);
 	}
 }
