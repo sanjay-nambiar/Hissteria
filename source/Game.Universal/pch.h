@@ -19,6 +19,7 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 #include <WICTextureLoader.h>
+#include <Audio.h>
 
 // Standard
 #include <memory>

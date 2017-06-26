@@ -4,6 +4,14 @@
 #include "MatrixHelper.h"
 #include <memory>
 #include <vector>
+#include <unordered_map>
+
+namespace DirectX
+{
+	class AudioEngine;
+	class SoundEffect;
+	class SoundEffectInstance;
+}
 
 namespace DX
 {
@@ -44,5 +52,18 @@ namespace DirectXGame
 
 		std::shared_ptr<InputComponent> mInputComponent;
 		std::shared_ptr<TimerComponent> mTimerComponent;
+		std::unique_ptr<DirectX::AudioEngine> mAudioEngine;
+
+		enum class SoundType
+		{
+			Music,
+			Consume,
+			Crash
+		};
+
+		std::unordered_map<SoundType, std::unique_ptr<DirectX::SoundEffect>> mSoundEffects;
+		std::unique_ptr<DirectX::SoundEffectInstance> mMusicInstance;
+
+		static const std::unordered_map<SoundType, std::wstring> SoundEffectFiles;
 	};
 }

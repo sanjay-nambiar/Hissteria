@@ -8,11 +8,18 @@ using namespace DirectX;
 
 namespace DirectXGame
 {
+	const std::unordered_map<SnakeManager::SoundType, std::wstring> SnakeManager::SoundEffectFiles = {
+		{ SoundType::Music, L"Content\\Audio\\Arcade-Fantasy.wav" },
+		{ SoundType::Consume, L"Content\\Audio\\Consume.wav" },
+		{ SoundType::Crash, L"Content\\Audio\\Crash.wav" }
+	};
+
 	SnakeManager::SnakeManager(const vector<shared_ptr<TextRenderer>>& textRenderers, const shared_ptr<SpriteManager>& spriteManager,
 		const shared_ptr<SpawnManager>& spawnManager, const shared_ptr<InputComponent>& gameCommands, const shared_ptr<TimerComponent>& timerComponent) :
 		GameComponent(nullptr),
 		mWinner(nullptr), mScoreRenderers(textRenderers), mSpriteManager(spriteManager),
-		mSpawnManager(spawnManager), mInputComponent(gameCommands), mTimerComponent(timerComponent)
+		mSpawnManager(spawnManager), mInputComponent(gameCommands), mTimerComponent(timerComponent),
+		mAudioEngine(make_unique<AudioEngine>())
 	{
 		std::uint32_t index = 1;
 		for (const auto& config : ProgramHelper::PlayerConfigs)
@@ -23,10 +30,23 @@ namespace DirectXGame
 			mSnakes.push_back(snake);
 			++index;
 		}
+		
+		for (const auto& entry : SoundEffectFiles)
+		{
+			mSoundEffects.insert({ entry.first, std::make_unique<SoundEffect>(mAudioEngine.get(), entry.second.c_str()) });
+		}
+		mMusicInstance = mSoundEffects[SoundType::Music]->CreateInstance();
+		mMusicInstance->SetVolume(0.5f);
+		mMusicInstance->Play(true);
 	}
 
 	void SnakeManager::Update(const DX::StepTimer& timer)
 	{
+		if (mWinner != nullptr)
+		{
+			return;
+		}
+
 		std::vector<XMFLOAT2> headingOffsets;
 		for (auto& snake : mSnakes)
 		{
@@ -106,6 +126,8 @@ namespace DirectXGame
 			std::wstring scoreText = ProgramHelper::ToWideString(snake->mName) + L" : " + std::to_wstring(snake->mScore) + L"\nLives : " + std::to_wstring(snake->mHealth);
 			mScoreRenderers[snake->mId - 1]->SetText(scoreText, 500, 100);
 		}
+
+		mAudioEngine->Update();
 	}
 
 	void SnakeManager::GetPlayerHeading(std::uint32_t playerId, DirectX::XMFLOAT2& headingOffset)
@@ -164,6 +186,7 @@ namespace DirectXGame
 							snake->BlinkSnake(ColorHelper::Yellow(), Snake::BlinkStyle::HeadOnly);
 						}
 						mInputComponent->VibrateController(snake->mId, 0.2f, 0.15f, 0.15f, 0.15f, 0.15f);
+						mSoundEffects[SoundType::Consume]->Play();
 						break;
 					}
 				}
@@ -212,6 +235,8 @@ namespace DirectXGame
 		TimerComponent::CallbackSignature callback = bind(&SnakeManager::KillSnake, this, placeholders::_1);
 		mTimerComponent->AddTimer(callback, snake.get(), 3.0f, 1);
 		snake->BlinkSnake(ColorHelper::Red(), Snake::BlinkStyle::FullBody);
+		
+		mSoundEffects[SoundType::Crash]->Play();
 	}
 
 	void SnakeManager::MakeSnakeInvincible(const shared_ptr<Snake>& snake)
@@ -220,12 +245,31 @@ namespace DirectXGame
 		TimerComponent::CallbackSignature callback = bind(&SnakeManager::MakeSnakeVulnerable, this, placeholders::_1);
 		mTimerComponent->AddTimer(callback, snake.get(), 2.0f, 1);
 		snake->BlinkSnake(ColorHelper::Red(), Snake::BlinkStyle::HeadOnly);
+		mSoundEffects[SoundType::Crash]->Play();
 	}
 
 	void SnakeManager::KillSnake(void* data)
 	{
-		Snake* snake = static_cast<Snake*>(data);
-		snake->Kill();
+		{
+			Snake* snake = static_cast<Snake*>(data);
+			snake->Kill();
+		}
+
+		std::uint32_t aliveSnakes = 0;
+		std::shared_ptr<Snake> winner;
+		for (auto& snake : mSnakes)
+		{
+			if (snake->mIsAlive)
+			{
+				++aliveSnakes;
+				winner = snake;
+			}
+		}
+
+		if (aliveSnakes == 1)
+		{
+			mWinner = winner;
+		}
 	}
 
 	void SnakeManager::MakeSnakeVulnerable(void* data)
