@@ -52,6 +52,7 @@ namespace DirectXGame
 		bool AddBlocks(std::uint32_t blocks);
 		void ShrinkSnake(std::uint32_t newBlockCount);
 		void BlinkSnake(const DirectX::XMFLOAT4& mBlinkColor, BlinkStyle blinkStyle);
+		void Hurt();
 		void Kill();
 
 		std::uint32_t mId;

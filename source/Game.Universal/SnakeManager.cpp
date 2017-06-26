@@ -103,7 +103,7 @@ namespace DirectXGame
 
 		for (auto& snake : mSnakes)
 		{
-			std::wstring scoreText = ProgramHelper::ToWideString(snake->mName) + L" : " + std::to_wstring(snake->mScore) + L"\n";
+			std::wstring scoreText = ProgramHelper::ToWideString(snake->mName) + L" : " + std::to_wstring(snake->mScore) + L"\nLives : " + std::to_wstring(snake->mHealth);
 			mScoreRenderers[snake->mId - 1]->SetText(scoreText, 500, 100);
 		}
 	}
@@ -191,7 +191,7 @@ namespace DirectXGame
 				if (mSnakes[collidee]->mIsAlive && snake->CheckCollisionWithSnake(mSnakes[collidee]))
 				{
 					mInputComponent->VibrateController(snake->mId, 0.5f, 1.0f, 1.0f);
-					--snake->mHealth;
+					snake->Hurt();
 					if (snake->mHealth == 0)
 					{
 						MarkSnakeForKill(snake);
@@ -208,6 +208,7 @@ namespace DirectXGame
 	void SnakeManager::MarkSnakeForKill(const shared_ptr<Snake>& snake)
 	{
 		snake->mSpeed = 0;
+		snake->mIsInvincible = true;
 		TimerComponent::CallbackSignature callback = bind(&SnakeManager::KillSnake, this, placeholders::_1);
 		mTimerComponent->AddTimer(callback, snake.get(), 3.0f, 1);
 		snake->BlinkSnake(ColorHelper::Red(), Snake::BlinkStyle::FullBody);

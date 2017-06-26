@@ -271,6 +271,14 @@ namespace DirectXGame
 		}
 	}
 
+	void Snake::Hurt()
+	{
+		if (mHealth > 0)
+		{
+			--mHealth;
+		}
+	}
+
 	void Snake::Kill()
 	{
 		mIsAlive = false;
