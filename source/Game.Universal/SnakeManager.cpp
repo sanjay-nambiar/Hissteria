@@ -10,8 +10,9 @@ namespace DirectXGame
 {
 	SnakeManager::SnakeManager(const vector<shared_ptr<TextRenderer>>& textRenderers, const shared_ptr<SpriteManager>& spriteManager,
 		const shared_ptr<SpawnManager>& spawnManager, const shared_ptr<InputComponent>& gameCommands, const shared_ptr<TimerComponent>& timerComponent) :
-		GameComponent(nullptr), mWinner(nullptr), mScoreRenderers(textRenderers),
-		mSpriteManager(spriteManager), mSpawnManager(spawnManager), mInputComponent(gameCommands), mTimerComponent(timerComponent)
+		GameComponent(nullptr),
+		mWinner(nullptr), mScoreRenderers(textRenderers), mSpriteManager(spriteManager),
+		mSpawnManager(spawnManager), mInputComponent(gameCommands), mTimerComponent(timerComponent)
 	{
 		std::uint32_t index = 1;
 		for (const auto& config : ProgramHelper::PlayerConfigs)
@@ -22,16 +23,6 @@ namespace DirectXGame
 			mSnakes.push_back(snake);
 			++index;
 		}
-
-		shared_ptr<XMFLOAT4> color = make_shared<XMFLOAT4>(ColorHelper::White());
-		const TimerComponent::CallbackSignature callback = std::bind(&SnakeManager::TestTimer, this, placeholders::_1);
-		mTimerComponent->AddTimer(callback, color, 5.0f, 5);
-	}
-
-	void SnakeManager::TestTimer(const std::shared_ptr<void>& data)
-	{
-		XMFLOAT4 color = *static_cast<XMFLOAT4*>(data.get());
-		mSnakes.front()->mBody.front().mSprite.lock()->SetColorInterpolation(color, 0.2f, 0.2f, 1);
 	}
 
 	void SnakeManager::Update(const DX::StepTimer& timer)
@@ -40,6 +31,10 @@ namespace DirectXGame
 		for (auto& snake : mSnakes)
 		{
 			headingOffsets.push_back({ 0.0f, 0.0f });
+			if (!snake->mIsAlive)
+			{
+				continue;
+			}
 			GetPlayerHeading(snake->mId, headingOffsets[snake->mId - 1]);
 		}
 		
@@ -67,6 +62,11 @@ namespace DirectXGame
 
 		for (auto& snake : mSnakes)
 		{
+			if (!snake->mIsAlive)
+			{
+				continue;
+			}
+
 			if ((headingOffsets[snake->mId - 1].x + headingOffsets[snake->mId - 1].y) != 0.0f)
 			{
 				snake->SetHeadingDirection(headingOffsets[snake->mId - 1]);
@@ -75,17 +75,26 @@ namespace DirectXGame
 			
 			if (IsDebugAddBodyBlockActive)
 			{
-				snake->AddBlocks(1, ColorHelper::Yellow());
+				if (snake->AddBlocks(1))
+				{
+					snake->BlinkSnake(ColorHelper::Yellow(), Snake::BlinkStyle::HeadAndTail);
+				}
+				else
+				{
+					snake->BlinkSnake(ColorHelper::Yellow(), Snake::BlinkStyle::HeadOnly);
+				}
 			}
 
 			if (IsDebugShrinkActive)
 			{
-				snake->ShrinkSnake(3, ColorHelper::White());
+				snake->ShrinkSnake(3);
+				snake->BlinkSnake(ColorHelper::White(), Snake::BlinkStyle::FullBody);
 			}
 
 			if (IsDebugExpandActive)
 			{
-				snake->AddBlocks(1000, ColorHelper::Purple());
+				snake->AddBlocks(1000);
+				snake->BlinkSnake(ColorHelper::Gray(), Snake::BlinkStyle::FullBody);
 			}
 		}
 
@@ -124,6 +133,11 @@ namespace DirectXGame
 		std::vector<std::shared_ptr<Spawn>> spawnsToUpdate;
 		for (auto& snake : mSnakes)
 		{
+			if (!snake->mIsAlive)
+			{
+				continue;
+			}
+
 			const auto& headSprite = snake->mBody.front().mSprite.lock();
 			const auto& snakePosition = headSprite->Transform().Position();
 
@@ -140,9 +154,15 @@ namespace DirectXGame
 					switch (spawn->Type())
 					{
 					case Spawn::SpawnType::Grow:
-						snake->AddBlocks(1, ColorHelper::Yellow());
 						snake->mScore += 5;
-						headSprite->SetColorInterpolation(ColorHelper::Yellow(), 0.2f, 0.2f, 3);
+						if (snake->AddBlocks(1))
+						{
+							snake->BlinkSnake(ColorHelper::Yellow(), Snake::BlinkStyle::HeadAndTail);
+						}
+						else
+						{
+							snake->BlinkSnake(ColorHelper::Yellow(), Snake::BlinkStyle::HeadOnly);
+						}
 						mInputComponent->VibrateController(snake->mId, 0.2f, 0.15f, 0.15f, 0.15f, 0.15f);
 						break;
 					}
@@ -158,22 +178,58 @@ namespace DirectXGame
 
 	void SnakeManager::SnakeToSnakeCollision()
 	{
-		vector<shared_ptr<Snake>> snakesToKill;
 		for (std::uint32_t collider = 0; collider < mSnakes.size(); ++collider)
 		{
+			auto& snake = mSnakes[collider];
+			if (snake->mIsInvincible || !snake->mIsAlive)
+			{
+				continue;
+			}
+
 			for (std::uint32_t collidee = 0; collidee < mSnakes.size(); ++collidee)
 			{
-				if (mSnakes[collider]->CheckCollisionWithSnake(mSnakes[collidee]))
+				if (mSnakes[collidee]->mIsAlive && snake->CheckCollisionWithSnake(mSnakes[collidee]))
 				{
-					snakesToKill.push_back(mSnakes[collider]);
-					mInputComponent->VibrateController(mSnakes[collider]->mId, 0.5f, 1.0f, 1.0f);
+					mInputComponent->VibrateController(snake->mId, 0.5f, 1.0f, 1.0f);
+					--snake->mHealth;
+					if (snake->mHealth == 0)
+					{
+						MarkSnakeForKill(snake);
+					}
+					else
+					{
+						MakeSnakeInvincible(snake);
+					}
 				}
 			}
 		}
+	}
 
-		if (snakesToKill.size() > 0)
-		{
-			return;
-		}
+	void SnakeManager::MarkSnakeForKill(const shared_ptr<Snake>& snake)
+	{
+		snake->mSpeed = 0;
+		TimerComponent::CallbackSignature callback = bind(&SnakeManager::KillSnake, this, placeholders::_1);
+		mTimerComponent->AddTimer(callback, snake.get(), 3.0f, 1);
+		snake->BlinkSnake(ColorHelper::Red(), Snake::BlinkStyle::FullBody);
+	}
+
+	void SnakeManager::MakeSnakeInvincible(const shared_ptr<Snake>& snake)
+	{
+		snake->mIsInvincible = true;
+		TimerComponent::CallbackSignature callback = bind(&SnakeManager::MakeSnakeVulnerable, this, placeholders::_1);
+		mTimerComponent->AddTimer(callback, snake.get(), 2.0f, 1);
+		snake->BlinkSnake(ColorHelper::Red(), Snake::BlinkStyle::HeadOnly);
+	}
+
+	void SnakeManager::KillSnake(void* data)
+	{
+		Snake* snake = static_cast<Snake*>(data);
+		snake->Kill();
+	}
+
+	void SnakeManager::MakeSnakeVulnerable(void* data)
+	{
+		Snake* snake = static_cast<Snake*>(data);
+		snake->mIsInvincible = false;
 	}
 }

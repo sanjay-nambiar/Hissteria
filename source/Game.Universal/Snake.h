@@ -18,6 +18,14 @@ namespace DirectXGame
 			Star
 		};
 
+		enum class BlinkStyle
+		{
+			HeadOnly,
+			HeadAndTail,
+			TailOnly,
+			FullBody
+		};
+
 		Snake(std::uint32_t id, SnakeType type, std::uint32_t bodyBlocks, const DirectX::XMFLOAT2& blockDimension, const DirectX::XMFLOAT2& position,
 			const DirectX::XMFLOAT2& heading, const DirectX::XMFLOAT4& headColor, const DirectX::XMFLOAT4& bodyColor, const std::shared_ptr<SpriteManager>& spriteManager);
 
@@ -41,10 +49,10 @@ namespace DirectXGame
 			const float mColliderRadius;
 		};
 
-		void AddBlocks(std::uint32_t blocks);
-		void AddBlocks(std::uint32_t blocks, const DirectX::XMFLOAT4& mBlinkColor);
+		bool AddBlocks(std::uint32_t blocks);
 		void ShrinkSnake(std::uint32_t newBlockCount);
-		void ShrinkSnake(std::uint32_t newBlockCount, const DirectX::XMFLOAT4& mBlinkColor);
+		void BlinkSnake(const DirectX::XMFLOAT4& mBlinkColor, BlinkStyle blinkStyle);
+		void Kill();
 
 		std::uint32_t mId;
 		SnakeType mType;
@@ -60,6 +68,8 @@ namespace DirectXGame
 		std::string mName;
 		std::uint32_t mScore;
 		std::uint32_t mHealth;
+		bool mIsInvincible;
+		bool mIsAlive;
 
 		std::shared_ptr<SpriteManager> mSpriteManager;
 

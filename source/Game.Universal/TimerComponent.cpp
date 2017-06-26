@@ -8,7 +8,7 @@ namespace DirectXGame
 {
 	const std::uint32_t TimerComponent::MaxTimers = 1000;
 
-	TimerComponent::CallbackData::CallbackData(const CallbackSignature& callback, const shared_ptr<void>& data, float timePeriod, uint32_t loopCount) :
+	TimerComponent::CallbackData::CallbackData(const CallbackSignature& callback, void* data, float timePeriod, uint32_t loopCount) :
 		mCallback(callback), mData(data), mTimePeriod(timePeriod), mLoopCount(loopCount),
 		mCurrentTime(0.0f), mCurrentLoopCount(0), mIsAlive(true)
 	{
@@ -66,7 +66,7 @@ namespace DirectXGame
 		mTimers.erase(eraseIt, mTimers.end());
 	}
 
-	void TimerComponent::AddTimer(const CallbackSignature& callback, const shared_ptr<void>& data, float timePeriod, uint32_t loopCount)
+	void TimerComponent::AddTimer(const CallbackSignature& callback, void* data, float timePeriod, uint32_t loopCount)
 	{
 		if (loopCount == 0)
 		{

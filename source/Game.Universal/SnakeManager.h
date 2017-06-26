@@ -30,7 +30,10 @@ namespace DirectXGame
 		void GetPlayerHeading(std::uint32_t playerId, DirectX::XMFLOAT2 &headingOffset);
 		void CheckSpawnCollision();
 		void SnakeToSnakeCollision();
-		void TestTimer(const std::shared_ptr<void>&);
+		void MarkSnakeForKill(const std::shared_ptr<Snake>& snake);
+		void MakeSnakeInvincible(const std::shared_ptr<Snake>& snake);
+		void KillSnake(void* snake);
+		void MakeSnakeVulnerable(void* snake);
 
 		std::vector<std::shared_ptr<Snake>> mSnakes;
 		std::shared_ptr<SpriteManager> mSpriteManager;

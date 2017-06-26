@@ -26,7 +26,7 @@ namespace DirectXGame
 
 	Snake::Snake(std::uint32_t id, SnakeType type, uint32_t bodyBlocks, const XMFLOAT2& blockDimension, const XMFLOAT2& position, const XMFLOAT2& heading,
 		const XMFLOAT4& headColor, const XMFLOAT4& bodyColor, const shared_ptr<SpriteManager>& spriteManager) :
-		mDimension(blockDimension), mHeadingDirection(heading), mHealth(DefaultHealth),
+		mDimension(blockDimension), mHeadingDirection(heading), mHealth(DefaultHealth), mIsInvincible(false), mIsAlive(true),
 		mSpeed(MaxSpeed), mColliderRadius(SnakeTypeConfigMapping.at(type).mColliderRadius), mId(id), mType(type), mScore(0),
 		mSpriteManager(spriteManager), mBlockSeparation(0.0f), mHeadColor(headColor), mBodyColor(bodyColor)
 	{
@@ -70,18 +70,14 @@ namespace DirectXGame
 		AddBlocks(bodyBlocks - 1);
 	}
 
-	void Snake::AddBlocks(std::uint32_t blocks)
+	bool Snake::AddBlocks(std::uint32_t blocks)
 	{
-		AddBlocks(blocks, mBodyColor);
-	}
-
-	void Snake::AddBlocks(std::uint32_t blocks, const DirectX::XMFLOAT4& mBlinkColor)
-	{
+		bool blockAdded = false;
 		for (std::uint32_t n = 0; n < blocks; ++n)
 		{
 			if (mBody.size() >= MaxBodyBlocks)
 			{
-				return;
+				return false;
 			}
 
 			BodyBlock block;
@@ -106,18 +102,15 @@ namespace DirectXGame
 			transform.SetPosition(positionFloat);
 			transform.SetScale(BlockScale);
 			sprite->SetTransform(transform);
-			sprite->SetColorInterpolation(mBlinkColor, BlinkForwardTime, BlinkBackwardTime, BlinkCount);
 
 			mBody.emplace_back(block);
+			blockAdded = true;
 		}
+
+		return blockAdded;
 	}
 
 	void Snake::ShrinkSnake(std::uint32_t newBlockCount)
-	{
-		ShrinkSnake(newBlockCount, mBodyColor);
-	}
-
-	void Snake::ShrinkSnake(std::uint32_t newBlockCount, const DirectX::XMFLOAT4& mBlinkColor)
 	{
 		if (newBlockCount > 0 && newBlockCount <= mBody.size())
 		{
@@ -126,11 +119,28 @@ namespace DirectXGame
 				mSpriteManager->RemoveSprite(mBody[index].mSprite);
 			}
 			mBody.erase(mBody.begin() + newBlockCount, mBody.end());
+		}
+	}
 
-			for (auto& block : mBody)
+	void Snake::BlinkSnake(const DirectX::XMFLOAT4& mBlinkColor, BlinkStyle blinkStyle)
+	{
+		if (blinkStyle != BlinkStyle::TailOnly)
+		{
+			mBody.front().mSprite.lock()->SetColorInterpolation(mBlinkColor, BlinkForwardTime, BlinkBackwardTime, BlinkCount);
+		}
+
+		if (blinkStyle == BlinkStyle::FullBody)
+		{
+			for (std::uint32_t index = 1; index < mBody.size() - 1; ++index)
 			{
+				auto& block = mBody[index];
 				block.mSprite.lock()->SetColorInterpolation(mBlinkColor, BlinkForwardTime, BlinkBackwardTime, BlinkCount);
 			}
+		}
+
+		if (blinkStyle != BlinkStyle::HeadOnly)
+		{
+			mBody.back().mSprite.lock()->SetColorInterpolation(mBlinkColor, BlinkForwardTime, BlinkBackwardTime, BlinkCount);
 		}
 	}
 
@@ -184,7 +194,6 @@ namespace DirectXGame
 				XMVECTOR testPoint = position + (XMLoadFloat2(&mHeadingDirection) * length);
 				if (XMVectorGetX(XMVector2LengthSq(testPoint - otherPosition)) < otherRadiusSq)
 				{
-					headSprite->SetColorInterpolation(ColorHelper::Red(), BlinkForwardTime, BlinkBackwardTime, BlinkCount);
 					return true;
 				}
 			}
@@ -194,6 +203,11 @@ namespace DirectXGame
 
 	void Snake::Update(const StepTimer& timer)
 	{
+		if (!mIsAlive)
+		{
+			return;
+		}
+
 		XMVECTOR velocity = XMVector2Normalize(XMLoadFloat2(&mHeadingDirection)) * mSpeed;
 		XMVECTOR prevPosition;
 		XMVECTOR prevBlockNewPosition;
@@ -254,6 +268,15 @@ namespace DirectXGame
 			transform.SetRotation(rotation);
 
 			sprite->SetTransform(transform);
+		}
+	}
+
+	void Snake::Kill()
+	{
+		mIsAlive = false;
+		for (auto& block : mBody)
+		{
+			mSpriteManager->RemoveSprite(block.mSprite);
 		}
 	}
 }
