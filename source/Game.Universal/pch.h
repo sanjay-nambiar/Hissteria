@@ -56,6 +56,7 @@
 
 // Game
 #include "InputComponent.h"
+#include "TimerComponent.h"
 #include "Sprite.h"
 #include "SpriteManager.h"
 #include "Spawn.h"

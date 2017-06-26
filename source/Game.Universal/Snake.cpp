@@ -8,6 +8,7 @@ using namespace std;
 namespace DirectXGame
 {
 	const std::uint32_t Snake::MaxBodyBlocks = 10;
+	const std::uint32_t Snake::DefaultHealth = 5;
 	const float Snake::MaxSpeed = 50.0f;
 	const float Snake::MaxForce = 5.0f;
 	
@@ -25,7 +26,7 @@ namespace DirectXGame
 
 	Snake::Snake(std::uint32_t id, SnakeType type, uint32_t bodyBlocks, const XMFLOAT2& blockDimension, const XMFLOAT2& position, const XMFLOAT2& heading,
 		const XMFLOAT4& headColor, const XMFLOAT4& bodyColor, const shared_ptr<SpriteManager>& spriteManager) :
-		mDimension(blockDimension), mHeadingDirection(heading),
+		mDimension(blockDimension), mHeadingDirection(heading), mHealth(DefaultHealth),
 		mSpeed(MaxSpeed), mColliderRadius(SnakeTypeConfigMapping.at(type).mColliderRadius), mId(id), mType(type), mScore(0),
 		mSpriteManager(spriteManager), mBlockSeparation(0.0f), mHeadColor(headColor), mBodyColor(bodyColor)
 	{

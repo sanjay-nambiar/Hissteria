@@ -8,10 +8,10 @@ using namespace DirectX;
 
 namespace DirectXGame
 {
-	SnakeManager::SnakeManager(const std::vector<std::shared_ptr<DX::TextRenderer>>& textRenderers, const std::shared_ptr<SpriteManager>& spriteManager,
-		const std::shared_ptr<SpawnManager>& spawnManager, const std::shared_ptr<InputComponent>& gameCommands) :
-		GameComponent(nullptr),
-		mScoreRenderers(textRenderers), mSpriteManager(spriteManager), mSpawnManager(spawnManager), mInputComponent(gameCommands)
+	SnakeManager::SnakeManager(const vector<shared_ptr<TextRenderer>>& textRenderers, const shared_ptr<SpriteManager>& spriteManager,
+		const shared_ptr<SpawnManager>& spawnManager, const shared_ptr<InputComponent>& gameCommands, const shared_ptr<TimerComponent>& timerComponent) :
+		GameComponent(nullptr), mWinner(nullptr), mScoreRenderers(textRenderers),
+		mSpriteManager(spriteManager), mSpawnManager(spawnManager), mInputComponent(gameCommands), mTimerComponent(timerComponent)
 	{
 		std::uint32_t index = 1;
 		for (const auto& config : ProgramHelper::PlayerConfigs)
@@ -22,6 +22,16 @@ namespace DirectXGame
 			mSnakes.push_back(snake);
 			++index;
 		}
+
+		shared_ptr<XMFLOAT4> color = make_shared<XMFLOAT4>(ColorHelper::White());
+		const TimerComponent::CallbackSignature callback = std::bind(&SnakeManager::TestTimer, this, placeholders::_1);
+		mTimerComponent->AddTimer(callback, color, 5.0f, 5);
+	}
+
+	void SnakeManager::TestTimer(const std::shared_ptr<void>& data)
+	{
+		XMFLOAT4 color = *static_cast<XMFLOAT4*>(data.get());
+		mSnakes.front()->mBody.front().mSprite.lock()->SetColorInterpolation(color, 0.2f, 0.2f, 1);
 	}
 
 	void SnakeManager::Update(const DX::StepTimer& timer)

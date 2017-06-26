@@ -59,10 +59,12 @@ namespace DirectXGame
 
 		std::string mName;
 		std::uint32_t mScore;
+		std::uint32_t mHealth;
 
 		std::shared_ptr<SpriteManager> mSpriteManager;
 
 		static const std::uint32_t MaxBodyBlocks;
+		static const std::uint32_t DefaultHealth;
 		static const float MaxSpeed;
 		static const float MaxForce;
 		static const float BlinkForwardTime;

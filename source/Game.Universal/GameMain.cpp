@@ -27,6 +27,9 @@ namespace DirectXGame
 		CoreWindow^ window = CoreWindow::GetForCurrentThread();
 		mInputComponent = make_shared<InputComponent>(deviceResources, window);
 
+		auto timerComponent = make_shared<TimerComponent>(deviceResources);
+		mComponents.push_back(timerComponent);
+
 		mFpsTextRenderer = make_shared<FpsTextRenderer>(mDeviceResources);
 		mFpsTextRenderer->SetVisible(ProgramHelper::IsDebugEnabled);
 		mComponents.push_back(mFpsTextRenderer);
@@ -44,7 +47,7 @@ namespace DirectXGame
 		auto spawnManager = make_shared<SpawnManager>(1, spriteManager);
 		mComponents.push_back(spawnManager);
 
-		auto snakeManager = make_shared<SnakeManager>(mTextRenderers, spriteManager, spawnManager, mInputComponent);
+		auto snakeManager = make_shared<SnakeManager>(mTextRenderers, spriteManager, spawnManager, mInputComponent, timerComponent);
 		mComponents.push_back(snakeManager);
 
 		mTimer.SetFixedTimeStep(true);

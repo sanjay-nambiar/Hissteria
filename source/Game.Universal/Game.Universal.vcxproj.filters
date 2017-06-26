@@ -75,6 +75,7 @@
     <ClCompile Include="SpriteManager.cpp" />
     <ClCompile Include="ProgramHelper.cpp" />
     <ClCompile Include="InputComponent.cpp" />
+    <ClCompile Include="TimerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Snake.h" />
@@ -112,6 +113,7 @@
     <ClInclude Include="SpriteManager.h" />
     <ClInclude Include="ProgramHelper.h" />
     <ClInclude Include="InputComponent.h" />
+    <ClInclude Include="TimerComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
