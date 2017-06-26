@@ -33,8 +33,14 @@ namespace DirectXGame
 			const std::shared_ptr<SpawnManager>& spawnManager, const std::shared_ptr<InputComponent>& gameCommands, const std::shared_ptr<TimerComponent>& timerComponent);
 		
 		void Update(const DX::StepTimer& timer) override;
-
 	private:
+		enum class RoundState
+		{
+			RoundBegin,
+			InGame,
+			RoundEnd
+		};
+
 		void GetPlayerHeading(std::uint32_t playerId, DirectX::XMFLOAT2 &headingOffset);
 		void CheckSpawnCollision();
 		void SnakeToSnakeCollision();
@@ -42,17 +48,24 @@ namespace DirectXGame
 		void MakeSnakeInvincible(const std::shared_ptr<Snake>& snake);
 		void KillSnake(void* snake);
 		void MakeSnakeVulnerable(void* snake);
+		void RoundBeginUpdate(const DX::StepTimer& timer);
+		void InGameUpdate(const DX::StepTimer& timer);
+		void RoundEndUpdate(const DX::StepTimer& timer);
+		void StartCountdown(void* data);
 
 		std::vector<std::shared_ptr<Snake>> mSnakes;
 		std::shared_ptr<SpriteManager> mSpriteManager;
 		std::shared_ptr<SpawnManager> mSpawnManager;
 		std::shared_ptr<Snake> mWinner;
 
-		std::vector<std::shared_ptr<DX::TextRenderer>> mScoreRenderers;
+		std::vector<std::shared_ptr<DX::TextRenderer>> mTextRenderers;
 
 		std::shared_ptr<InputComponent> mInputComponent;
 		std::shared_ptr<TimerComponent> mTimerComponent;
 		std::unique_ptr<DirectX::AudioEngine> mAudioEngine;
+		RoundState mRoundState;
+		std::vector<bool> mPlayerPressedStart;
+		std::uint32_t mCount;
 
 		enum class SoundType
 		{
@@ -65,5 +78,6 @@ namespace DirectXGame
 		std::unique_ptr<DirectX::SoundEffectInstance> mMusicInstance;
 
 		static const std::unordered_map<SoundType, std::wstring> SoundEffectFiles;
+		static const std::uint32_t MaxCountForCountDown;
 	};
 }

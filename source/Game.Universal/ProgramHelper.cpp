@@ -25,24 +25,24 @@ namespace DirectXGame
 			"Blue",
 			3,
 			{ 6.0f, 3.0f },
-			{ -50.0f, 40.0f },
+			{ -20.0f, 40.0f },
 			{ 1.0f, 0.0f },
 			Snake::SnakeType::ChainLink,
+			ColorHelper::Aqua(),
 			ColorHelper::Blue(),
-			ColorHelper::Green(),
 			TextRenderer::AnchorPoint::TopLeft
 		},
 
 		// Player 2
 		{
-			"Purple",
+			"Green",
 			3,
 			{ 6.0f, 3.0f },
-			{ 50.0f, -40.0f },
+			{ 20.0f, -40.0f },
 			{ -1.0f, 0.0f },
 			Snake::SnakeType::ChainLink,
-			ColorHelper::Purple(),
-			ColorHelper::White(),
+			ColorHelper::Lime(),
+			ColorHelper::Green(),
 			TextRenderer::AnchorPoint::TopRight
 		}
 	};

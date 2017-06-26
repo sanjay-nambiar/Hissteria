@@ -40,6 +40,10 @@ namespace DirectXGame
 			mComponents.push_back(mTextRenderers.back());
 			mTextRenderers.back()->SetTextFormatting(config.mHeadColor, config.mScoreAnchorPoint);
 		}
+		mTextRenderers.push_back(make_shared<TextRenderer>(mDeviceResources));
+		mComponents.push_back(mTextRenderers.back());
+		mTextRenderers.back()->SetFont(TextRenderer::DefaultFont, 72.0f);
+		mTextRenderers.back()->SetTextFormatting(ColorHelper::White(), TextRenderer::AnchorPoint::Center);
 
 		auto spriteManager = make_shared<SpriteManager>(mDeviceResources, camera);
 		mComponents.push_back(spriteManager);

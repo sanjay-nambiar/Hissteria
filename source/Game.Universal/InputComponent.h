@@ -33,6 +33,8 @@ namespace DirectXGame
 	public:
 		enum class Command
 		{
+			StartRound,
+			RestartRound,
 			GameExit,
 
 			MoveLeft,

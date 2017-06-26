@@ -14,7 +14,7 @@ namespace DirectXGame
 
 	SpawnManager::SpawnManager(std::uint32_t maxSpawns, std::shared_ptr<SpriteManager> spriteManager) :
 		GameComponent(nullptr),
-		mRandomRealDistribution(0, 100.0f), mRandomIntDistribution(0, 100),
+		mRandomRealDistribution(0, 100.0f), mRandomIntDistribution(0, 100), mShouldSpawn(false),
 		mRandomGenerator(static_cast<uint32_t>(chrono::system_clock::now().time_since_epoch().count())),
 		mMaxSpawns(maxSpawns), mSpriteManager(spriteManager), mSecondsSinceLastSpawn(0.0f)
 	{
@@ -24,6 +24,7 @@ namespace DirectXGame
 			auto spawn = make_shared<Spawn>(Spawn::SpawnType::Grow, spriteManager);
 			auto sprite = spawn->mSprite.lock();
 			auto transform = Transform2D(Vector2Helper::Zero, 0.0f, SpawnScale);
+			sprite->SetIsVisible(false);
 			sprite->SetTransform(transform);
 			mSpawns.push_back(spawn);
 		}
@@ -40,6 +41,11 @@ namespace DirectXGame
 
 	void SpawnManager::Update(const StepTimer& timer)
 	{
+		if (!mShouldSpawn)
+		{
+			return;
+		}
+
 		mSecondsSinceLastSpawn += static_cast<float>(timer.GetElapsedSeconds());
 		bool updatePosition = (mSecondsSinceLastSpawn >= SpawnLifeTimeSeconds);
 
@@ -59,6 +65,16 @@ namespace DirectXGame
 		if (updatePosition)
 		{
 			mSecondsSinceLastSpawn = 0;
+		}
+	}
+
+	void SpawnManager::SetSpawnEnabled(bool isEnabled)
+	{
+		mShouldSpawn = isEnabled;
+		mSecondsSinceLastSpawn = 0.0f;
+		for (auto& spawn : mSpawns)
+		{
+			spawn->mSprite.lock()->SetIsVisible(mShouldSpawn);
 		}
 	}
 

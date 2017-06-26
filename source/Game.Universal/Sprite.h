@@ -27,6 +27,9 @@ namespace DirectXGame
 		const DirectX::XMFLOAT4& Color() const;
 		void SetColor(const DirectX::XMFLOAT4& color);
 
+		bool IsVisible() const;
+		void SetIsVisible(bool isVisible);
+
 		void SetColorInterpolation(const DirectX::XMFLOAT4& color, float interpolationForwardPeriod, float interpolationBackwardPeriod, std::uint32_t interpolationCount);
 		void Update(const DX::StepTimer& timer);
 	private:
@@ -35,6 +38,7 @@ namespace DirectXGame
 		DirectX::XMINT2 mSpriteIndex;
 		DirectX::XMFLOAT4 mColor;
 		DirectX::XMFLOAT4 mOriginalColor;
+		bool mIsVisible;
 
 		DirectX::XMFLOAT4 mInterpolationColor;
 		float mInterpolationForwardPeriod;

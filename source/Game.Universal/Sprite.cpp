@@ -10,7 +10,7 @@ namespace DirectXGame
 	Sprite::Sprite(const XMINT2& spriteIndex, const Transform2D& transform, const XMFLOAT4X4& textureTransform) :
 		mSpriteIndex(spriteIndex), mTransform(transform), mTextureTransform(textureTransform), mColor(1.0f, 1.0f, 1.0f, 1.0f),
 		mInterpolationCurrentPeriod(0.0f), mInterpolationForwardPeriod(0.0f), mInterpolationBackwardPeriod(0.0f), mInterpolationCount(0),
-		mInterpolationCurrentTimePoint(0.0f), mInterpolationCurrentCount(0.0f), mIsForwardInterpolation(true)
+		mInterpolationCurrentTimePoint(0.0f), mInterpolationCurrentCount(0.0f), mIsForwardInterpolation(true), mIsVisible(true)
 	{
 		mInterpolationColor = mColor;
 	}
@@ -54,6 +54,16 @@ namespace DirectXGame
 	{
 		mColor = color;
 		mOriginalColor = mColor;
+	}
+
+	bool Sprite::IsVisible() const
+	{
+		return mIsVisible;
+	}
+
+	void Sprite::SetIsVisible(bool isVisible)
+	{
+		mIsVisible = isVisible;
 	}
 
 	void Sprite::SetColorInterpolation(const XMFLOAT4& color, float interpolationForwardPeriod, float interpolationBackwardPeriod, uint32_t interpolationCount)

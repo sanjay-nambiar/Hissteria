@@ -172,7 +172,10 @@ namespace DirectXGame
 
 		for (const auto& sprite : mSprites)
 		{
-			DrawSprite(*sprite);
+			if (sprite->mIsVisible)
+			{
+				DrawSprite(*sprite);
+			}
 		}
 	}
 

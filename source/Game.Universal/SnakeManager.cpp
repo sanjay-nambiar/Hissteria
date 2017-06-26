@@ -14,13 +14,17 @@ namespace DirectXGame
 		{ SoundType::Crash, L"Content\\Audio\\Crash.wav" }
 	};
 
+	const std::uint32_t SnakeManager::MaxCountForCountDown = 3;
+
 	SnakeManager::SnakeManager(const vector<shared_ptr<TextRenderer>>& textRenderers, const shared_ptr<SpriteManager>& spriteManager,
 		const shared_ptr<SpawnManager>& spawnManager, const shared_ptr<InputComponent>& gameCommands, const shared_ptr<TimerComponent>& timerComponent) :
 		GameComponent(nullptr),
-		mWinner(nullptr), mScoreRenderers(textRenderers), mSpriteManager(spriteManager),
+		mWinner(nullptr), mTextRenderers(textRenderers), mSpriteManager(spriteManager),
 		mSpawnManager(spawnManager), mInputComponent(gameCommands), mTimerComponent(timerComponent),
-		mAudioEngine(make_unique<AudioEngine>())
+		mAudioEngine(make_unique<AudioEngine>()), mRoundState(RoundState::RoundBegin), mCount(0)
 	{
+		mSnakes.reserve(ProgramHelper::PlayerConfigs.size());
+		mPlayerPressedStart.reserve(ProgramHelper::PlayerConfigs.size());
 		std::uint32_t index = 1;
 		for (const auto& config : ProgramHelper::PlayerConfigs)
 		{
@@ -28,8 +32,16 @@ namespace DirectXGame
 				config.mHeadColor, config.mBodyColor, mSpriteManager);
 			snake->mName = config.mName;
 			mSnakes.push_back(snake);
+			mPlayerPressedStart.push_back(false);
 			++index;
 		}
+
+		for (auto& textRenderer : mTextRenderers)
+		{
+			textRenderer->SetVisible(false);
+		}
+		mTextRenderers.back()->SetVisible(true);
+		mTextRenderers.back()->SetText(L"Press Start", 350, 50);
 		
 		for (const auto& entry : SoundEffectFiles)
 		{
@@ -42,11 +54,56 @@ namespace DirectXGame
 
 	void SnakeManager::Update(const DX::StepTimer& timer)
 	{
-		if (mWinner != nullptr)
+		switch (mRoundState)
 		{
-			return;
+		case RoundState::RoundBegin:
+			RoundBeginUpdate(timer);
+			break;
+
+		case RoundState::InGame:
+			InGameUpdate(timer);
+			break;
+
+		case RoundState::RoundEnd:
+			RoundEndUpdate(timer);
+			break;
 		}
 
+		// Score update
+		for (auto& snake : mSnakes)
+		{
+			std::wstring scoreText = ProgramHelper::ToWideString(snake->mName) + L" : " + std::to_wstring(snake->mScore) + L"\nLives : " + std::to_wstring(snake->mHealth);
+			mTextRenderers[snake->mId - 1]->SetText(scoreText, 500, 100);
+		}
+		mAudioEngine->Update();
+	}
+
+	void SnakeManager::RoundBeginUpdate(const DX::StepTimer&)
+	{
+		bool allPlayersReady = true;
+		for (uint32_t index = 0; index < mSnakes.size(); ++index)
+		{
+			auto& snake = mSnakes[index];
+			bool playerPressedStart = mInputComponent->IsCommandGiven(snake->mId, InputComponent::Command::StartRound);
+			if (!mPlayerPressedStart[index] && playerPressedStart)
+			{
+				mSoundEffects[SoundType::Consume]->Play();
+				mSnakes[index]->BlinkSnake(ColorHelper::White(), Snake::BlinkStyle::FullBody);
+			}
+			mPlayerPressedStart[index] = mPlayerPressedStart[index] | playerPressedStart;
+			allPlayersReady &= mPlayerPressedStart[index];
+		}
+
+		if (allPlayersReady)
+		{
+			mCount = 0;
+			TimerComponent::CallbackSignature callback = bind(&SnakeManager::StartCountdown, this, placeholders::_1);
+			mTimerComponent->AddTimer(callback, nullptr, 1.2f, MaxCountForCountDown);
+		}
+	}
+
+	void SnakeManager::InGameUpdate(const StepTimer& timer)
+	{
 		std::vector<XMFLOAT2> headingOffsets;
 		for (auto& snake : mSnakes)
 		{
@@ -57,7 +114,7 @@ namespace DirectXGame
 			}
 			GetPlayerHeading(snake->mId, headingOffsets[snake->mId - 1]);
 		}
-		
+
 		// Debug keys
 		bool IsDebugAddBodyBlockActive = false;
 		bool IsDebugShrinkActive = false;
@@ -92,7 +149,7 @@ namespace DirectXGame
 				snake->SetHeadingDirection(headingOffsets[snake->mId - 1]);
 			}
 			snake->Update(timer);
-			
+
 			if (IsDebugAddBodyBlockActive)
 			{
 				if (snake->AddBlocks(1))
@@ -120,14 +177,11 @@ namespace DirectXGame
 
 		CheckSpawnCollision();
 		SnakeToSnakeCollision();
+	}
 
-		for (auto& snake : mSnakes)
-		{
-			std::wstring scoreText = ProgramHelper::ToWideString(snake->mName) + L" : " + std::to_wstring(snake->mScore) + L"\nLives : " + std::to_wstring(snake->mHealth);
-			mScoreRenderers[snake->mId - 1]->SetText(scoreText, 500, 100);
-		}
-
-		mAudioEngine->Update();
+	void SnakeManager::RoundEndUpdate(const DX::StepTimer& timer)
+	{
+		timer;
 	}
 
 	void SnakeManager::GetPlayerHeading(std::uint32_t playerId, DirectX::XMFLOAT2& headingOffset)
@@ -243,7 +297,7 @@ namespace DirectXGame
 	{
 		snake->mIsInvincible = true;
 		TimerComponent::CallbackSignature callback = bind(&SnakeManager::MakeSnakeVulnerable, this, placeholders::_1);
-		mTimerComponent->AddTimer(callback, snake.get(), 2.0f, 1);
+		mTimerComponent->AddTimer(callback, snake.get(), 1.2f, 1);
 		snake->BlinkSnake(ColorHelper::Red(), Snake::BlinkStyle::HeadOnly);
 		mSoundEffects[SoundType::Crash]->Play();
 	}
@@ -269,6 +323,7 @@ namespace DirectXGame
 		if (aliveSnakes == 1)
 		{
 			mWinner = winner;
+			mRoundState = RoundState::RoundEnd;
 		}
 	}
 
@@ -276,5 +331,28 @@ namespace DirectXGame
 	{
 		Snake* snake = static_cast<Snake*>(data);
 		snake->mIsInvincible = false;
+	}
+
+	void SnakeManager::StartCountdown(void*)
+	{
+		mTextRenderers.back()->SetText(std::to_wstring(MaxCountForCountDown - mCount), 50, 50);
+		++mCount;
+
+		if (mCount == MaxCountForCountDown)
+		{
+			mRoundState = RoundState::InGame;
+			mSpawnManager->SetEnabled(true);
+			for (auto& textRenderer : mTextRenderers)
+			{
+				textRenderer->SetVisible(true);
+			}
+			mTextRenderers.back()->SetVisible(false);
+			
+			for (auto& snake : mSnakes)
+			{
+				snake->BlinkSnake(ColorHelper::White(), Snake::BlinkStyle::FullBody);
+			}
+			mSoundEffects[SoundType::Consume]->Play();
+		}
 	}
 }

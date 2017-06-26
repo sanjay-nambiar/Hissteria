@@ -8,13 +8,15 @@ using namespace std;
 
 namespace DX
 {
+	const std::wstring TextRenderer::DefaultFont = L"Segoe UI";
+
 	// Initializes D2D resources used for text rendering.
 	TextRenderer::TextRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
 		DrawableGameComponent(deviceResources),
 		mText(L""), mAnchorPoint(AnchorPoint::TopLeft), mFontName(L""), mFontSize(32.0f)
 	{
 		ZeroMemory(&mTextMetrics, sizeof(DWRITE_TEXT_METRICS));
-		SetFont(L"Segoe UI");
+		SetFont(DefaultFont);
 		SetTextFormatting(ColorHelper::White(), AnchorPoint::BottomRight);
 	}
 

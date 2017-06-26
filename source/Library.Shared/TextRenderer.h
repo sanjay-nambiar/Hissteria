@@ -32,6 +32,8 @@ namespace DX
 		void SetText(const std::wstring& text, std::uint32_t maxWidth, std::uint32_t maxHeight);
 		void SetFont(const std::wstring& fontName, float fontSize = 32.0f);
 		void SetTextFormatting(const DirectX::XMFLOAT4& color, AnchorPoint anchorPoint);
+
+		static const std::wstring DefaultFont;
 	private:
 		std::wstring                                    mText;
 		DWRITE_TEXT_METRICS	                            mTextMetrics;
