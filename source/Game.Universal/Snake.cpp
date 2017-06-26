@@ -213,14 +213,43 @@ namespace DirectXGame
 		XMVECTOR prevBlockNewPosition;
 		float deltaPositionLength;
 
+		float width = ProgramHelper::Right - ProgramHelper::Left;
+		float height = ProgramHelper::Top - ProgramHelper::Bottom;
+		float minX = width * 100;
+		float maxX = -minX;
+		float minY = height * 100;
+		float maxY = -minY;
+
 		{
 			// Update head
-			auto sprite = mBody.front().mSprite.lock();
+			auto& head = mBody.front();
+			auto sprite = head.mSprite.lock();
 			auto transform = sprite->Transform();
 
 			XMVECTOR position = XMLoadFloat2(&transform.Position());
 			prevPosition = position;
 			position = position + (velocity * static_cast<float>(timer.GetElapsedSeconds()));
+
+			// wrapping
+			float x = XMVectorGetX(position);
+			float y = XMVectorGetY(position);
+			if (x < minX)
+			{
+				minX = x;
+			}
+			if (x > maxX)
+			{
+				maxX = x;
+			}
+
+			if (y < minY)
+			{
+				minY = y;
+			}
+			if (y > maxY)
+			{
+				maxY = y;
+			}
 
 			// update position
 			XMFLOAT2 positionFloat;
@@ -254,6 +283,27 @@ namespace DirectXGame
 			position = prevBlockNewPosition + delta;
 			prevBlockNewPosition = position;
 
+			// wrapping
+			float x = XMVectorGetX(position);
+			float y = XMVectorGetY(position);
+			if (x < minX)
+			{
+				minX = x;
+			}
+			else if (x > maxX)
+			{
+				maxX = x;
+			}
+
+			if (y < minY)
+			{
+				minY = y;
+			}
+			else if (y > maxY)
+			{
+				maxY = y;
+			}
+
 			// update position
 			XMFLOAT2 positionFloat;
 			XMStoreFloat2(&positionFloat, position);
@@ -267,6 +317,36 @@ namespace DirectXGame
 			}
 			transform.SetRotation(rotation);
 
+			sprite->SetTransform(transform);
+		}
+
+		XMFLOAT2 adjustment = { 0.0f, 0.0f };
+		if ((minX - mColliderRadius) > ProgramHelper::Right)
+		{
+			adjustment.x = -(width + (maxX - ProgramHelper::Right));
+		}
+		else if ((maxX + mColliderRadius) < ProgramHelper::Left)
+		{
+			adjustment.x = (width + (ProgramHelper::Left - minX));
+		}
+
+		if ((minY - mColliderRadius) > ProgramHelper::Top)
+		{
+			adjustment.y = -(height + (maxY - ProgramHelper::Top));
+		}
+		else if ((maxY + mColliderRadius) < ProgramHelper::Bottom)
+		{
+			adjustment.y = (height + (ProgramHelper::Bottom - minY));
+		}
+
+		XMVECTOR adjustMentVector = XMLoadFloat2(&adjustment);
+		for (auto& block : mBody)
+		{
+			const auto& sprite = block.mSprite.lock();
+			auto transform = sprite->Transform();
+			XMFLOAT2 mirroredPos;
+			XMStoreFloat2(&mirroredPos, adjustMentVector + XMLoadFloat2(&transform.Position()));
+			transform.SetPosition(mirroredPos);
 			sprite->SetTransform(transform);
 		}
 	}
