@@ -32,6 +32,7 @@ namespace DirectXGame
 		SnakeManager(const std::vector<std::shared_ptr<DX::TextRenderer>>& textRenderers, const std::shared_ptr<SpriteManager>& spriteManager,
 			const std::shared_ptr<SpawnManager>& spawnManager, const std::shared_ptr<InputComponent>& gameCommands, const std::shared_ptr<TimerComponent>& timerComponent);
 		
+		void Initialize();
 		void Update(const DX::StepTimer& timer) override;
 	private:
 		enum class RoundState

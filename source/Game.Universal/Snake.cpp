@@ -8,7 +8,7 @@ using namespace std;
 namespace DirectXGame
 {
 	const std::uint32_t Snake::MaxBodyBlocks = 10;
-	const std::uint32_t Snake::DefaultHealth = 5;
+	const std::uint32_t Snake::DefaultHealth = 1;
 	const float Snake::MaxSpeed = 50.0f;
 	const float Snake::MaxForce = 5.0f;
 	
@@ -174,33 +174,6 @@ namespace DirectXGame
 		return mHeadingDirection;
 	}
 
-	bool Snake::CheckCollisionWithSnake(const std::shared_ptr<Snake>& snake)
-	{
-		const auto& headSprite = mBody.front().mSprite.lock();
-		const auto position = XMLoadFloat2(&headSprite->Transform().Position());
-		float distance = (snake->ColliderRadius() + mColliderRadius);
-		float otherRadiusSq = snake->ColliderRadius();
-		otherRadiusSq *= otherRadiusSq;
-
-		// if checking collision with self, start at index 1, else start at index 0
-		std::uint32_t index = (snake.get() != this) ? 0 : 1;
-		for (; index < snake->mBody.size(); ++index)
-		{
-			const auto& body = snake->mBody[index];
-			XMVECTOR otherPosition = XMLoadFloat2(&body.mSprite.lock()->Transform().Position());
-			float length = XMVectorGetX(XMVector2Length(position - otherPosition));
-			if (distance >= length)
-			{
-				XMVECTOR testPoint = position + (XMLoadFloat2(&mHeadingDirection) * length);
-				if (XMVectorGetX(XMVector2LengthSq(testPoint - otherPosition)) < otherRadiusSq)
-				{
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	void Snake::Update(const StepTimer& timer)
 	{
 		if (!mIsAlive)
@@ -364,7 +337,59 @@ namespace DirectXGame
 		mIsAlive = false;
 		for (auto& block : mBody)
 		{
-			mSpriteManager->RemoveSprite(block.mSprite);
+			block.mSprite.lock()->SetIsVisible(false);
 		}
+	}
+
+	void Snake::Revive(const XMFLOAT2& position, uint32_t blocks)
+	{
+		mSpeed = Snake::MaxSpeed;
+		mIsInvincible = false;
+		mIsAlive = true;
+		mHealth = DefaultHealth;
+		mScore = 0;
+
+		const auto& headSprite = mBody.front().mSprite.lock();
+		auto transform = headSprite->Transform();
+		headSprite->SetIsVisible(true);
+		transform.SetPosition(position);
+
+		float rotation = XMVectorGetX(XMVector2AngleBetweenNormals(XMLoadFloat2(&ZeroAngleVector), XMLoadFloat2(&mHeadingDirection)));
+		if (mHeadingDirection.y < 0)
+		{
+			rotation = -rotation;
+		}
+		transform.SetRotation(rotation);
+		headSprite->SetTransform(transform);
+
+		ShrinkSnake(1);
+		AddBlocks(blocks - 1);
+	}
+
+	bool Snake::CheckCollisionWithSnake(const std::shared_ptr<Snake>& snake)
+	{
+		const auto& headSprite = mBody.front().mSprite.lock();
+		const auto position = XMLoadFloat2(&headSprite->Transform().Position());
+		float distance = (snake->ColliderRadius() + mColliderRadius);
+		float otherRadiusSq = snake->ColliderRadius();
+		otherRadiusSq *= otherRadiusSq;
+
+		// if checking collision with self, start at index 1, else start at index 0
+		std::uint32_t index = (snake.get() != this) ? 0 : 1;
+		for (; index < snake->mBody.size(); ++index)
+		{
+			const auto& body = snake->mBody[index];
+			XMVECTOR otherPosition = XMLoadFloat2(&body.mSprite.lock()->Transform().Position());
+			float length = XMVectorGetX(XMVector2Length(position - otherPosition));
+			if (distance >= length)
+			{
+				XMVECTOR testPoint = position + (XMLoadFloat2(&mHeadingDirection) * length);
+				if (XMVectorGetX(XMVector2LengthSq(testPoint - otherPosition)) < otherRadiusSq)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

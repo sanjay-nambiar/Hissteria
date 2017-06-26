@@ -15,6 +15,7 @@ namespace DirectXGame
 	{
 		// Game inputs
 		{ KeyOf(0, Command::GameExit),{ KeyCheckType::WasPressedThisFrame, Keys::Escape, GamePadButtons::Back, MouseButtons::Middle } },
+		{ KeyOf(0, Command::RestartRound),{ KeyCheckType::WasPressedThisFrame, Keys::Enter, GamePadButtons::Start, MouseButtons::None } },
 
 		// Player 1 inputs
 		{ KeyOf(1, Command::StartRound),{ KeyCheckType::WasPressedThisFrame, Keys::PageUp, GamePadButtons::Start, MouseButtons::None } },

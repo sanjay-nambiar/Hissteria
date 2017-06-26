@@ -19,7 +19,9 @@ namespace DirectXGame
 		void CreateDeviceDependentResources() override;
 		void ReleaseDeviceDependentResources() override;
 		
+		void Initialize();
 		void Update(const DX::StepTimer& timer) override;
+
 		void SetSpawnEnabled(bool isEnabled);
 		void UpdateSpawnLocations(const std::vector<std::shared_ptr<Spawn>>& spawn);
 		const std::vector<std::shared_ptr<Spawn>>& Spawns();

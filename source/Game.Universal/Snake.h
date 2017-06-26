@@ -54,6 +54,7 @@ namespace DirectXGame
 		void BlinkSnake(const DirectX::XMFLOAT4& mBlinkColor, BlinkStyle blinkStyle);
 		void Hurt();
 		void Kill();
+		void Revive(const DirectX::XMFLOAT2& position, std::uint32_t blocks);
 
 		std::uint32_t mId;
 		SnakeType mType;

@@ -23,6 +23,7 @@ namespace DirectXGame
 		{
 			auto spawn = make_shared<Spawn>(Spawn::SpawnType::Grow, spriteManager);
 			auto sprite = spawn->mSprite.lock();
+			sprite->SetColor(ColorHelper::Purple());
 			auto transform = Transform2D(Vector2Helper::Zero, 0.0f, SpawnScale);
 			sprite->SetIsVisible(false);
 			sprite->SetTransform(transform);
@@ -37,6 +38,12 @@ namespace DirectXGame
 
 	void SpawnManager::ReleaseDeviceDependentResources()
 	{
+	}
+
+	void SpawnManager::Initialize()
+	{
+		mShouldSpawn = false;
+		mSecondsSinceLastSpawn = 0.0f;
 	}
 
 	void SpawnManager::Update(const StepTimer& timer)
@@ -85,7 +92,7 @@ namespace DirectXGame
 		XMFLOAT2 position = ProgramHelper::RandomLocationInsideBorder({spawn->ColliderRadius(), spawn->ColliderRadius()});
 		transform.SetPosition(position);
 		sprite->SetTransform(transform);
-		sprite->SetColor(ColorHelper::RandomColor());
+		sprite->SetColor(ColorHelper::Purple());
 	}
 
 	void SpawnManager::UpdateSpawnLocations(const std::vector<std::shared_ptr<Spawn>>& spawns)

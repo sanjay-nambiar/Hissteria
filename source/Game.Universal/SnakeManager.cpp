@@ -41,7 +41,7 @@ namespace DirectXGame
 			textRenderer->SetVisible(false);
 		}
 		mTextRenderers.back()->SetVisible(true);
-		mTextRenderers.back()->SetText(L"Press Start", 350, 50);
+		mTextRenderers.back()->SetText(L"Press Start", 350, 80);
 		
 		for (const auto& entry : SoundEffectFiles)
 		{
@@ -50,6 +50,26 @@ namespace DirectXGame
 		mMusicInstance = mSoundEffects[SoundType::Music]->CreateInstance();
 		mMusicInstance->SetVolume(0.5f);
 		mMusicInstance->Play(true);
+	}
+
+	void SnakeManager::Initialize()
+	{
+		for (uint32_t index = 0; index < ProgramHelper::PlayerConfigs.size(); ++index)
+		{
+			const auto& config = ProgramHelper::PlayerConfigs[index];
+			auto& snake = mSnakes[index];
+			snake->mType = config.mType;
+			snake->mHeadingDirection = config.mHeading;
+			snake->mHeadColor = config.mHeadColor;
+			snake->mBodyColor = config.mBodyColor;
+			snake->Revive(config.mPosition, config.mBlocks);
+			mPlayerPressedStart[index] = false;
+		}
+		mSpawnManager->Initialize();
+		mTextRenderers.back()->SetText(L"Press Start", 350, 80);
+		mRoundState = RoundState::RoundBegin;
+		mWinner = nullptr;
+		mCount = 0;
 	}
 
 	void SnakeManager::Update(const DX::StepTimer& timer)
@@ -181,12 +201,10 @@ namespace DirectXGame
 
 	void SnakeManager::RoundEndUpdate(const DX::StepTimer&)
 	{
-		for (auto& textRenderer : mTextRenderers)
+		if (mInputComponent->IsCommandGiven(0, InputComponent::Command::RestartRound))
 		{
-			textRenderer->SetVisible(false);
+			Initialize();
 		}
-		mTextRenderers.back()->SetText(L" Winner : " + ProgramHelper::ToWideString(mWinner->mName), 500, 40);
-		mTextRenderers.back()->SetVisible(true);
 	}
 
 	void SnakeManager::GetPlayerHeading(std::uint32_t playerId, DirectX::XMFLOAT2& headingOffset)
@@ -328,7 +346,14 @@ namespace DirectXGame
 		if (aliveSnakes == 1)
 		{
 			mWinner = winner;
+			for (auto& textRenderer : mTextRenderers)
+			{
+				textRenderer->SetVisible(false);
+			}
+			mTextRenderers.back()->SetText(L" Winner : " + ProgramHelper::ToWideString(mWinner->mName), 500, 50);
+			mTextRenderers.back()->SetVisible(true);
 			mRoundState = RoundState::RoundEnd;
+			mSpawnManager->SetSpawnEnabled(false);
 		}
 	}
 
@@ -346,7 +371,6 @@ namespace DirectXGame
 		if (mCount == MaxCountForCountDown)
 		{
 			mRoundState = RoundState::InGame;
-			mSpawnManager->SetEnabled(true);
 			for (auto& textRenderer : mTextRenderers)
 			{
 				textRenderer->SetVisible(true);
@@ -358,6 +382,7 @@ namespace DirectXGame
 				snake->BlinkSnake(ColorHelper::White(), Snake::BlinkStyle::FullBody);
 			}
 			mSoundEffects[SoundType::Consume]->Play();
+			mSpawnManager->SetSpawnEnabled(true);
 		}
 	}
 }
