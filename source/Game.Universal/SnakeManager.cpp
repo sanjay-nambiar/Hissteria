@@ -179,9 +179,14 @@ namespace DirectXGame
 		SnakeToSnakeCollision();
 	}
 
-	void SnakeManager::RoundEndUpdate(const DX::StepTimer& timer)
+	void SnakeManager::RoundEndUpdate(const DX::StepTimer&)
 	{
-		timer;
+		for (auto& textRenderer : mTextRenderers)
+		{
+			textRenderer->SetVisible(false);
+		}
+		mTextRenderers.back()->SetText(L" Winner : " + ProgramHelper::ToWideString(mWinner->mName), 500, 40);
+		mTextRenderers.back()->SetVisible(true);
 	}
 
 	void SnakeManager::GetPlayerHeading(std::uint32_t playerId, DirectX::XMFLOAT2& headingOffset)
