@@ -47,14 +47,6 @@
 #include "MouseComponent.h"
 #include "GamePadComponent.h"
 
-// Local
-#include "Ball.h"
-#include "BallManager.h"
-#include "Field.h"
-#include "FieldManager.h"
-#include "MoodySprite.h"
-#include "SpriteDemoManager.h"
-
 // Game
 #include "InputComponent.h"
 #include "TimerComponent.h"

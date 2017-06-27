@@ -245,31 +245,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
-    <ClInclude Include="Ball.h" />
-    <ClInclude Include="BallManager.h" />
     <ClInclude Include="InputComponent.h" />
-    <ClInclude Include="Field.h" />
-    <ClInclude Include="FieldManager.h" />
     <ClInclude Include="ProgramHelper.h" />
     <ClInclude Include="Spawn.h" />
     <ClInclude Include="GameMain.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="MoodySprite.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="SnakeManager.h" />
     <ClInclude Include="SpawnManager.h" />
     <ClInclude Include="Sprite.h" />
-    <ClInclude Include="SpriteDemoManager.h" />
     <ClInclude Include="SpriteManager.h" />
     <ClInclude Include="TimerComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="Ball.cpp" />
-    <ClCompile Include="BallManager.cpp" />
     <ClCompile Include="InputComponent.cpp" />
-    <ClCompile Include="Field.cpp" />
-    <ClCompile Include="FieldManager.cpp" />
     <ClCompile Include="ProgramHelper.cpp" />
     <ClCompile Include="Spawn.cpp" />
     <ClCompile Include="GameMain.cpp" />
@@ -281,12 +271,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="MoodySprite.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="SnakeManager.cpp" />
     <ClCompile Include="SpawnManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="SpriteDemoManager.cpp" />
     <ClCompile Include="SpriteManager.cpp" />
     <ClCompile Include="TimerComponent.cpp" />
   </ItemGroup>
