@@ -34,7 +34,8 @@ namespace DirectXGame
 		mBody.reserve(bodyBlocks);
 
 		XMFLOAT2 positionFloat = position;
-		XMVECTOR centerOffset = { 0.5f, 0.5f };
+		XMFLOAT2 centerOffsetFloat(0.5f, 0.5f);
+		XMVECTOR centerOffset = XMLoadFloat2(&centerOffsetFloat);
 
 		// calculate block offset and offset position to sprite's center
 		XMVECTOR blockDimensionVector = XMLoadFloat2(&blockDimension);
