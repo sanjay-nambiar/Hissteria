@@ -247,8 +247,10 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="BallManager.h" />
+    <ClInclude Include="InputComponent.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="FieldManager.h" />
+    <ClInclude Include="ProgramHelper.h" />
     <ClInclude Include="Spawn.h" />
     <ClInclude Include="GameMain.h" />
     <ClInclude Include="pch.h" />
@@ -259,13 +261,16 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteDemoManager.h" />
     <ClInclude Include="SpriteManager.h" />
+    <ClInclude Include="TimerComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="BallManager.cpp" />
+    <ClCompile Include="InputComponent.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="FieldManager.cpp" />
+    <ClCompile Include="ProgramHelper.cpp" />
     <ClCompile Include="Spawn.cpp" />
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="pch.cpp">
@@ -283,6 +288,7 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteDemoManager.cpp" />
     <ClCompile Include="SpriteManager.cpp" />
+    <ClCompile Include="TimerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -329,6 +335,11 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Content\Audio\Arcade-Fantasy.wav" />
+    <Media Include="Content\Audio\Consume.wav" />
+    <Media Include="Content\Audio\Crash.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

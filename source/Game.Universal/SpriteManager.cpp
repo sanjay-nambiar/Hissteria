@@ -95,10 +95,12 @@ namespace DirectXGame
 
 			D3D11_BLEND_DESC blendStateDesc = { 0 };
 			blendStateDesc.RenderTarget[0].BlendEnable = true;
+			blendStateDesc.AlphaToCoverageEnable = false;
+			blendStateDesc.IndependentBlendEnable = false;
 			blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 			blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 			blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-			blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_INV_DEST_ALPHA;
+			blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 			blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 			blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 			blendStateDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
@@ -130,11 +132,16 @@ namespace DirectXGame
 		mTextureSampler.Reset();
 	}
 
-	void SpriteManager::Update(const StepTimer&)
+	void SpriteManager::Update(const StepTimer& timer)
 	{
 		if (!mLoadingComplete)
 		{
 			return;
+		}
+
+		for (auto& sprite : mSprites)
+		{
+			sprite->Update(timer);
 		}
 	}
 
@@ -165,7 +172,10 @@ namespace DirectXGame
 
 		for (const auto& sprite : mSprites)
 		{
-			DrawSprite(*sprite);
+			if (sprite->mIsVisible)
+			{
+				DrawSprite(*sprite);
+			}
 		}
 	}
 

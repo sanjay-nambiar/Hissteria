@@ -38,6 +38,9 @@
     <Filter Include="Core">
       <UniqueIdentifier>{c2843093-37ce-458b-baa6-3be1740df48d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\Audio">
+      <UniqueIdentifier>{39efe5a8-23b8-4f8e-ab71-c66e1d27defa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Snake.cpp" />
@@ -73,6 +76,9 @@
     <ClCompile Include="Spawn.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteManager.cpp" />
+    <ClCompile Include="ProgramHelper.cpp" />
+    <ClCompile Include="InputComponent.cpp" />
+    <ClCompile Include="TimerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Snake.h" />
@@ -108,6 +114,9 @@
     <ClInclude Include="Spawn.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteManager.h" />
+    <ClInclude Include="ProgramHelper.h" />
+    <ClInclude Include="InputComponent.h" />
+    <ClInclude Include="TimerComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -146,5 +155,16 @@
     <AppxManifest Include="Package.appxmanifest">
       <Filter>Core</Filter>
     </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Content\Audio\Arcade-Fantasy.wav">
+      <Filter>Content\Audio</Filter>
+    </Media>
+    <Media Include="Content\Audio\Consume.wav">
+      <Filter>Content\Audio</Filter>
+    </Media>
+    <Media Include="Content\Audio\Crash.wav">
+      <Filter>Content\Audio</Filter>
+    </Media>
   </ItemGroup>
 </Project>

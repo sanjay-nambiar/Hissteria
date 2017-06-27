@@ -32,6 +32,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)MatrixHelper.cpp">
       <Filter>Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)DeviceResources.h" />
@@ -69,6 +70,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)MatrixHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)TextRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Cameras">

@@ -11,6 +11,8 @@ namespace DX
 	class MouseComponent;
 	class KeyboardComponent;
 	class GamePadComponent;
+	class GameCommands;
+	class FpsTextRenderer;
 }
 
 // Renders Direct2D and 3D content on the screen.
@@ -29,13 +31,25 @@ namespace DirectXGame
 		virtual void OnDeviceRestored();
 
 	private:
+		enum class GameState
+		{
+			Menu,
+			InGame,
+			Pause,
+			DebugPause
+		};
+
 		void IntializeResources();
 
 		std::shared_ptr<DX::DeviceResources> mDeviceResources;
 		std::vector<std::shared_ptr<DX::GameComponent>> mComponents;
 		DX::StepTimer mTimer;
-		std::shared_ptr<DX::KeyboardComponent> mKeyboard;
-		std::shared_ptr<DX::MouseComponent> mMouse;
-		std::shared_ptr<DX::GamePadComponent> mGamePad;
+		std::shared_ptr<InputComponent> mInputComponent;
+		std::shared_ptr<DX::FpsTextRenderer> mFpsTextRenderer;
+		std::vector<std::shared_ptr<DX::TextRenderer>> mTextRenderers;
+
+		GameState mGameState;
+		GameState mPreviousGameState;
+		bool mDebugStep;
 	};
 }

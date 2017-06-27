@@ -27,6 +27,7 @@
 #include <string>
 #include <cstdint>
 #include <sstream>
+#include <unordered_map>
 
 // Local
 #include "VectorHelper.h"

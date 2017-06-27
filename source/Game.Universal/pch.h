@@ -19,12 +19,14 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 #include <WICTextureLoader.h>
+#include <Audio.h>
 
 // Standard
 #include <memory>
 #include <string>
 #include <cstdint>
 #include <vector>
+#include <algorithm>
 
 // Library
 #include "ColorHelper.h"
@@ -36,6 +38,7 @@
 #include "DrawableGameComponent.h"
 #include "DirectXHelper.h"
 #include "FpsTextRenderer.h"
+#include "TextRenderer.h"
 #include "Camera.h"
 #include "OrthographicCamera.h"
 #include "Transform2D.h"
@@ -53,9 +56,12 @@
 #include "SpriteDemoManager.h"
 
 // Game
+#include "InputComponent.h"
+#include "TimerComponent.h"
 #include "Sprite.h"
 #include "SpriteManager.h"
 #include "Spawn.h"
 #include "SpawnManager.h"
 #include "Snake.h"
 #include "SnakeManager.h"
+#include "ProgramHelper.h"

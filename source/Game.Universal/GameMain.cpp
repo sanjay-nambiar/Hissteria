@@ -14,7 +14,7 @@ namespace DirectXGame
 {
 	// Loads and initializes application assets when the application is loaded.
 	GameMain::GameMain(const shared_ptr<DX::DeviceResources>& deviceResources) :
-		mDeviceResources(deviceResources)
+		mDeviceResources(deviceResources), mGameState(GameState::InGame), mPreviousGameState(GameState::Menu), mDebugStep(false)
 	{
 		// Register to be notified if the Device is lost or recreated
 		mDeviceResources->RegisterDeviceNotify(this);
@@ -23,20 +23,31 @@ namespace DirectXGame
 		mComponents.push_back(camera);
 		camera->SetPosition(0, 0, 1);
 
+		// Input component is not pushed to components list since it is updated manually so that debug inputs can be detected during pause game
 		CoreWindow^ window = CoreWindow::GetForCurrentThread();
-		mKeyboard = make_shared<KeyboardComponent>(mDeviceResources);		
-		mKeyboard->Keyboard()->SetWindow(window);
-		mComponents.push_back(mKeyboard);
+		mInputComponent = make_shared<InputComponent>(deviceResources, window);
 
-		mMouse = make_shared<MouseComponent>(mDeviceResources);		
-		mMouse->Mouse()->SetWindow(window);
-		mComponents.push_back(mMouse);
+		auto timerComponent = make_shared<TimerComponent>(deviceResources);
+		mComponents.push_back(timerComponent);
 
-		mGamePad = make_shared<GamePadComponent>(mDeviceResources);
-		mComponents.push_back(mGamePad);
+		mFpsTextRenderer = make_shared<FpsTextRenderer>(mDeviceResources);
+		mFpsTextRenderer->SetVisible(ProgramHelper::IsDebugEnabled);
+		mComponents.push_back(mFpsTextRenderer);
 
-		auto fpsTextRenderer = make_shared<FpsTextRenderer>(mDeviceResources);
-		mComponents.push_back(fpsTextRenderer);
+		for (const auto& config : ProgramHelper::PlayerConfigs)
+		{
+			mTextRenderers.push_back(make_shared<TextRenderer>(mDeviceResources));
+			mComponents.push_back(mTextRenderers.back());
+			mTextRenderers.back()->SetTextFormatting(config.mHeadColor, config.mScoreAnchorPoint);
+		}
+		mTextRenderers.push_back(make_shared<TextRenderer>(mDeviceResources));
+		mComponents.push_back(mTextRenderers.back());
+		mTextRenderers.back()->SetTextFormatting(ColorHelper::White(), TextRenderer::AnchorPoint::Top);
+
+		mTextRenderers.push_back(make_shared<TextRenderer>(mDeviceResources));
+		mComponents.push_back(mTextRenderers.back());
+		mTextRenderers.back()->SetFont(TextRenderer::DefaultFont, 72.0f);
+		mTextRenderers.back()->SetTextFormatting(ColorHelper::White(), TextRenderer::AnchorPoint::Center);
 
 		auto spriteManager = make_shared<SpriteManager>(mDeviceResources, camera);
 		mComponents.push_back(spriteManager);
@@ -44,7 +55,7 @@ namespace DirectXGame
 		auto spawnManager = make_shared<SpawnManager>(1, spriteManager);
 		mComponents.push_back(spawnManager);
 
-		auto snakeManager = make_shared<SnakeManager>(spriteManager, mKeyboard, mGamePad);
+		auto snakeManager = make_shared<SnakeManager>(mTextRenderers, spriteManager, spawnManager, mInputComponent, timerComponent);
 		mComponents.push_back(snakeManager);
 
 		mTimer.SetFixedTimeStep(true);
@@ -73,16 +84,52 @@ namespace DirectXGame
 		// Update scene objects.
 		mTimer.Tick([&]()
 		{
-			for (auto& component : mComponents)
+			mInputComponent->Update(mTimer);
+
+			if (mGameState != GameState::DebugPause || (mGameState == GameState::DebugPause && mDebugStep))
 			{
-				component->Update(mTimer);
+				for (auto& component : mComponents)
+				{
+					component->Update(mTimer);
+				}
+				mDebugStep = false;
 			}
 
-			if (mKeyboard->WasKeyPressedThisFrame(Keys::Escape) ||
-				mMouse->WasButtonPressedThisFrame(MouseButtons::Middle) ||
-				mGamePad->WasButtonPressedThisFrame(GamePadButtons::Back))
+			if (mInputComponent->IsCommandGiven(0, InputComponent::Command::GameExit))
 			{
 				CoreApplication::Exit();
+			}
+
+
+			// Turn on master debug
+			if (mInputComponent->IsCommandGiven(0, InputComponent::Command::MasterDebugToggle))
+			{
+				ProgramHelper::IsDebugEnabled = !ProgramHelper::IsDebugEnabled;
+				mFpsTextRenderer->SetVisible(ProgramHelper::IsDebugEnabled);
+			}
+
+			// Debug keys
+			if (ProgramHelper::IsDebugEnabled)
+			{
+				if (mInputComponent->IsCommandGiven(0, InputComponent::Command::DebugPause))
+				{
+					if (mGameState != GameState::DebugPause)
+					{
+						mPreviousGameState = mGameState;
+						mGameState = GameState::DebugPause;
+					}
+					else
+					{
+						GameState temp = mGameState;
+						mGameState = mPreviousGameState;
+						mPreviousGameState = temp;
+					}
+				}
+			}
+
+			if (mInputComponent->IsCommandGiven(0, InputComponent::Command::DebugStepForward))
+			{
+				mDebugStep = true;
 			}
 		});
 	}

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GamePadComponent.h"
+#include "StepTimer.h"
 
 using namespace std;
 using namespace DirectX;
@@ -14,7 +15,7 @@ namespace DX
 	}
 
 	GamePadComponent::GamePadComponent(const shared_ptr<DX::DeviceResources>& deviceResources, int player) :
-		GameComponent(deviceResources), mPlayer(player)
+		GameComponent(deviceResources), mPlayer(player), mVibrationPeriod(0.0f), mElapsedVibrationTime(0.0f)
 	{
 		mCurrentState = sGamePad->GetState(mPlayer);
 		mLastState = mCurrentState;
@@ -37,7 +38,11 @@ namespace DX
 
 	void GamePadComponent::Update(const StepTimer& timer)
 	{
-		UNREFERENCED_PARAMETER(timer);
+		mElapsedVibrationTime += static_cast<float>(timer.GetElapsedSeconds());
+		if (mElapsedVibrationTime >= mVibrationPeriod)
+		{
+			StopVibration();
+		};
 
 		mLastState = mCurrentState;
 		mCurrentState = sGamePad->GetState(mPlayer);
@@ -127,5 +132,19 @@ namespace DX
 			default:
 				throw exception("Invalid GamePadButtons.");
 		}
+	}
+
+	void GamePadComponent::VibrateController(float timePeriod, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger)
+	{
+		mVibrationPeriod = timePeriod;
+		mElapsedVibrationTime = 0.0f;
+		GamePad()->SetVibration(mPlayer, leftMotor, rightMotor, leftTrigger, rightTrigger);
+	}
+
+	void GamePadComponent::StopVibration()
+	{
+		mVibrationPeriod = 0.0f;
+		mElapsedVibrationTime = 0.0f;
+		GamePad()->SetVibration(mPlayer, 0.0f, 0.0f);
 	}
 }

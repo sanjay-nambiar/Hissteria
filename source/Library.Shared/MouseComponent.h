@@ -16,7 +16,8 @@ namespace DX
 		Right,
 		Middle,
 		X1,
-		X2
+		X2,
+		None
 	};
 
 	enum class MouseModes
