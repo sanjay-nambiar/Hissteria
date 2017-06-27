@@ -23,3 +23,5 @@ The game is made in C++ with DirectX and is a Universal Windows Platform app. It
 **Move Down**:  Gamepad2 Dpad Down / S <br/>
 **Move Right**:  Gamepad2 Dpad Right / D <br/>
 **Restart Round**: Gamepad2 Start / Enter <br/>
+
+[![Gameplay Demo](https://img.youtube.com/vi/U6qG_2rCcR0/0.jpg)](https://www.youtube.com/watch?v=U6qG_2rCcR0)
