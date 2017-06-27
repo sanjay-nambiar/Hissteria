@@ -8,7 +8,7 @@ using namespace std;
 namespace DirectXGame
 {
 	const std::uint32_t Snake::MaxBodyBlocks = 15;
-	const std::uint32_t Snake::DefaultHealth = 5;
+	const std::uint32_t Snake::DefaultHealth = 10;
 	const float Snake::MaxSpeed = 50.0f;
 	const float Snake::MaxForce = 5.0f;
 	

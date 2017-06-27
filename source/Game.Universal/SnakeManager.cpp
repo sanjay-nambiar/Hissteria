@@ -15,7 +15,7 @@ namespace DirectXGame
 	};
 
 	const uint32_t SnakeManager::MaxCountForCountDown = 3;
-	const uint32_t SnakeManager::TargetScoreToAchieve = 200;
+	const uint32_t SnakeManager::TargetScoreToAchieve = 100;
 
 	SnakeManager::SnakeManager(const vector<shared_ptr<TextRenderer>>& textRenderers, const shared_ptr<SpriteManager>& spriteManager,
 		const shared_ptr<SpawnManager>& spawnManager, const shared_ptr<InputComponent>& gameCommands, const shared_ptr<TimerComponent>& timerComponent) :
