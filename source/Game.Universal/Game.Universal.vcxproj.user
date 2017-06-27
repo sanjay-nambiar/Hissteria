@@ -2,6 +2,6 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>AppHostLocalDebugger</DebuggerFlavor>
-    <DebuggerMachineName>10.8.3.20</DebuggerMachineName>
+    <DebuggerMachineName>10.8.1.136</DebuggerMachineName>
   </PropertyGroup>
 </Project>

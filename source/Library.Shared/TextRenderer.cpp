@@ -94,10 +94,10 @@ namespace DX
 		context->BeginDraw();
 
 		const float left = -350;
-		const float center = (logicalSize.Width / 2) - (mTextMetrics.layoutWidth / 2);
+		const float center = (logicalSize.Width / 2) - (mTextMetrics.layoutWidth / 2) + 20;
 		const float right = logicalSize.Width - mTextMetrics.layoutWidth - 50;
 		const float top = 0;
-		const float middle = (logicalSize.Height / 2) - (mTextMetrics.layoutHeight / 2) - 50;
+		const float middle = (logicalSize.Height / 2) - (mTextMetrics.layoutHeight / 2) - 40;
 		const float bottom = logicalSize.Height - mTextMetrics.height;
 
 		const std::unordered_map<AnchorPoint, D2D1::Matrix3x2F> textAlignments =

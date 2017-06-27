@@ -48,6 +48,7 @@ namespace DirectXGame
 		void MarkSnakeForKill(const std::shared_ptr<Snake>& snake);
 		void MakeSnakeInvincible(const std::shared_ptr<Snake>& snake);
 		void KillSnake(void* snake);
+		void SetWinner(std::shared_ptr<DirectXGame::Snake> &winner);
 		void MakeSnakeVulnerable(void* snake);
 		void RoundBeginUpdate(const DX::StepTimer& timer);
 		void InGameUpdate(const DX::StepTimer& timer);
@@ -80,5 +81,6 @@ namespace DirectXGame
 
 		static const std::unordered_map<SoundType, std::wstring> SoundEffectFiles;
 		static const std::uint32_t MaxCountForCountDown;
+		static const std::uint32_t TargetScoreToAchieve;
 	};
 }

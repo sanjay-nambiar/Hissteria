@@ -15,7 +15,7 @@ namespace DirectXGame
 
 	const float ProgramHelper::Left = -50.0f;
 	const float ProgramHelper::Right = 50.0f;
-	const float ProgramHelper::Top = 50.0f;
+	const float ProgramHelper::Top = 45.0f;
 	const float ProgramHelper::Bottom = -50.0f;
 
 	const vector<ProgramHelper::PlayerConfig> ProgramHelper::PlayerConfigs =
