@@ -21,6 +21,14 @@ namespace DX
 		DPadDown,
 		DPadLeft,
 		DPadRight,
+		LeftThumbStickUp,
+		LeftThumbStickDown,
+		LeftThumbStickLeft,
+		LeftThumbStickRight,
+		RightThumbStickUp,
+		RightThumbStickDown,
+		RightThumbStickLeft,
+		RightThumbStickRight,
 		None
 	};
 

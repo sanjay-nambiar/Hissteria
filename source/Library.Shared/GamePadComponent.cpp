@@ -129,6 +129,29 @@ namespace DX
 			case GamePadButtons::DPadRight:
 				return state.dpad.right;
 
+			case GamePadButtons::LeftThumbStickUp:
+				return state.IsLeftThumbStickUp();
+
+			case GamePadButtons::LeftThumbStickDown:
+				return state.IsLeftThumbStickDown();
+
+			case GamePadButtons::LeftThumbStickLeft:
+				return state.IsLeftThumbStickLeft();
+
+			case GamePadButtons::LeftThumbStickRight:
+				return state.IsLeftThumbStickRight();
+
+			case GamePadButtons::RightThumbStickUp:
+				return state.IsRightThumbStickUp();
+
+			case GamePadButtons::RightThumbStickDown:
+				return state.IsRightThumbStickDown();
+
+			case GamePadButtons::RightThumbStickLeft:
+				return state.IsRightThumbStickLeft();
+
+			case GamePadButtons::RightThumbStickRight:
+				return state.IsRightThumbStickRight();
 			default:
 				throw exception("Invalid GamePadButtons.");
 		}

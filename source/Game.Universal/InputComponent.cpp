@@ -19,17 +19,17 @@ namespace DirectXGame
 
 		// Player 1 inputs
 		{ KeyOf(1, Command::StartRound),{ KeyCheckType::WasPressedThisFrame, Keys::PageUp, GamePadButtons::Start, MouseButtons::None } },
-		{ KeyOf(1, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::Up, GamePadButtons::DPadUp, MouseButtons::None } },
-		{ KeyOf(1, Command::MoveLeft), { KeyCheckType::WasPressedThisFrame, Keys::Left, GamePadButtons::DPadLeft, MouseButtons::None} },
-		{ KeyOf(1, Command::MoveDown),{ KeyCheckType::WasPressedThisFrame, Keys::Down, GamePadButtons::DPadDown, MouseButtons::None } },
-		{ KeyOf(1, Command::MoveRight), { KeyCheckType::WasPressedThisFrame, Keys::Right, GamePadButtons::DPadRight, MouseButtons::None } },
+		{ KeyOf(1, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::Up, GamePadButtons::LeftThumbStickUp, MouseButtons::None } },
+		{ KeyOf(1, Command::MoveLeft), { KeyCheckType::WasPressedThisFrame, Keys::Left, GamePadButtons::LeftThumbStickLeft, MouseButtons::None} },
+		{ KeyOf(1, Command::MoveDown),{ KeyCheckType::WasPressedThisFrame, Keys::Down, GamePadButtons::LeftThumbStickDown, MouseButtons::None } },
+		{ KeyOf(1, Command::MoveRight), { KeyCheckType::WasPressedThisFrame, Keys::Right, GamePadButtons::LeftThumbStickRight, MouseButtons::None } },
 
 		// Player 2 inputs
 		{ KeyOf(2, Command::StartRound),{ KeyCheckType::WasPressedThisFrame, Keys::Q, GamePadButtons::Start, MouseButtons::None } },
-		{ KeyOf(2, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::W, GamePadButtons::DPadUp, MouseButtons::None } },
-		{ KeyOf(2, Command::MoveLeft),{ KeyCheckType::WasPressedThisFrame, Keys::A, GamePadButtons::DPadLeft, MouseButtons::None } },
-		{ KeyOf(2, Command::MoveDown),{ KeyCheckType::WasPressedThisFrame, Keys::S, GamePadButtons::DPadDown, MouseButtons::None } },
-		{ KeyOf(2, Command::MoveRight),{ KeyCheckType::WasPressedThisFrame, Keys::D, GamePadButtons::DPadRight, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveUp),{ KeyCheckType::WasPressedThisFrame, Keys::W, GamePadButtons::LeftThumbStickUp, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveLeft),{ KeyCheckType::WasPressedThisFrame, Keys::A, GamePadButtons::LeftThumbStickLeft, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveDown),{ KeyCheckType::WasPressedThisFrame, Keys::S, GamePadButtons::LeftThumbStickDown, MouseButtons::None } },
+		{ KeyOf(2, Command::MoveRight),{ KeyCheckType::WasPressedThisFrame, Keys::D, GamePadButtons::LeftThumbStickRight, MouseButtons::None } },
 
 		// Debug inputs
 		{ KeyOf(0, Command::MasterDebugToggle), { KeyCheckType::WasPressedThisFrame, Keys::OemTilde, GamePadButtons::None, MouseButtons::None } },
