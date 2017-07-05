@@ -10,18 +10,18 @@ The game is made in C++ with DirectX and is a Universal Windows Platform app. It
 ## Controls
 ### Player1
 **Start Round**: Gamepad1 Start / Page UP <br/>
-**Move Up**:  Gamepad1 Dpad Up / Up <br/>
-**Move Left**:  Gamepad1 Dpad Left / Left <br/>
-**Move Down**:  Gamepad1 Dpad Down / Down <br/>
-**Move Right**:  Gamepad1 Dpad Right / Right <br/>
+**Move Up**:  Gamepad1 Left Thumbstick Up / Up <br/>
+**Move Left**:  Gamepad1 Left Thumbstick Left / Left <br/>
+**Move Down**:  Gamepad1 Left Thumbstick Down / Down <br/>
+**Move Right**:  Gamepad1 Left Thumbstick Right / Right <br/>
 **Restart Round**: Gamepad1 Start / Enter <br/>
  <br/>
 ### Player2
 **Start Round**:  Gamepad2 Start / Q <br/>
-**Move Up**:  Gamepad2 Dpad Up / W <br/>
-**Move Left**:  Gamepad2 Dpad Left / A <br/>
-**Move Down**:  Gamepad2 Dpad Down / S <br/>
-**Move Right**:  Gamepad2 Dpad Right / D <br/>
+**Move Up**:  Gamepad2 Left Thumbstick Up / W <br/>
+**Move Left**:  Gamepad2 Left Thumbstick Left / A <br/>
+**Move Down**:  Gamepad2 Left Thumbstick Down / S <br/>
+**Move Right**:  Gamepad2 Left Thumbstick Right / D <br/>
 **Restart Round**: Gamepad2 Start / Enter <br/>
 
 [![Gameplay Demo](https://img.youtube.com/vi/U6qG_2rCcR0/0.jpg)](https://www.youtube.com/watch?v=U6qG_2rCcR0)
